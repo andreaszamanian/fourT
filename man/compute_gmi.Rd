@@ -18,5 +18,7 @@ compute_gmi(x, y = 0, z = 0, exclude_bv = FALSE, allow_norm = TRUE)
 \item{allow_norm}{Boolean. Compute GMI with time periods 'rounded' to start of day}
 }
 \description{
-Computes the glucose management indicator for a given time frame
+Computes the glucose management indicator for a given time frame.
+GMI is computed following the results of:
+https://diabetesjournals.org/care/article/42/4/e60/36083/Glucose-Management-Indicator-GMI-Insights-and
 }
