@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_dexcom.R
 \name{read_dexcom}
 \alias{read_dexcom}
-\title{Reads .csv file, deidentifies the data (removes PHI)}
+\title{Reads Dexcom data}
 \usage{
 read_dexcom(x)
 }
@@ -13,5 +13,5 @@ read_dexcom(x)
 A data frame.
 }
 \description{
-Reads .csv file, deidentifies the data (removes PHI)
+Reads .csv file, deidentifies the data (removes PHI), reformats
 }

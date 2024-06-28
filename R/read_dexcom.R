@@ -1,5 +1,6 @@
-#' Reads .csv file, deidentifies the data (removes PHI)
+#' Reads Dexcom data
 #'
+#' Reads .csv file, deidentifies the data (removes PHI), reformats
 #' @param x A file (maybe filepath).
 #'
 #' @return A data frame.
@@ -62,6 +63,7 @@ reformat <- function(x, y){
        substr(frame[i, "bg_value_num"], 1, 1) != "8" &&
        substr(frame[i, "bg_value_num"], 1, 1) != "9" ) {
         frame[i, "bg_value_flag"] <- frame[i, "bg_value_num"]
+        frame[i, "bg_value_num"] <- NA
     }
     i = i+1
   }
