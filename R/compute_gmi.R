@@ -34,6 +34,8 @@ compute_gmi <- function(x,
   }
   breaks_input <- paste(period_days, day_or_days, sep = " ")
 
+  #print(breaks_input)
+
   #chop up frame into certain date-time ranges
   cut_frame <- frame
 
