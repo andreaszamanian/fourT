@@ -39,8 +39,6 @@ compute_gmi <- function(x,
   #chop up frame into certain date-time ranges
   cut_frame <- frame
 
-  #THIS IS LAST ISSUE TO FIX
-  #edit call to period_days here
   cut_frame_ints <- cut(frame$`bg_date_time`, breaks = breaks_input)
   cut_frame <- as.vector.factor(cut(frame$`bg_date_time`, breaks = breaks_input))
 
