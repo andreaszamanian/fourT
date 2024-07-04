@@ -24,14 +24,23 @@ compute_gmi <- function(x,
                         ) {
   frame <- x
   period_days <- (7*y)+z
+  if(period_days != 1){
+    period_days <- as.character(period_days)
+    day_or_days <- "days"
+  }
+  if(period_days == 1){
+    period_days <- as.character(period_days)
+    day_or_days <- "day"
+  }
+  breaks_input <- paste(period_days, day_or_days, sep = " ")
 
   #chop up frame into certain date-time ranges
   cut_frame <- frame
+
   #THIS IS LAST ISSUE TO FIX
   #edit call to period_days here
-  #cut_frame_ints <- cut(frame$`bg_date_time`, breaks = period_days + " days")
-  #cut_frame <- as.vector.factor(cut(frame$`bg_date_time`, breaks = period_days days))
-
+  cut_frame_ints <- cut(frame$`bg_date_time`, breaks = breaks_input)
+  cut_frame <- as.vector.factor(cut(frame$`bg_date_time`, breaks = breaks_input))
 
   #setting up df
   time_period_totals <- matrix(NA, nrow = max(cut_frame_ints), ncol = 5)
