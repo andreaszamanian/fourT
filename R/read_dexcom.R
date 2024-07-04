@@ -7,13 +7,14 @@
 #' @export
 #'
 #' @examples
-read_dexcom <- function(x) {
+read_dexcom <- function(x, col_spec = FALSE) {
   #if(x != .csv file){
-    #throw error "incorrect file type input"
+    #stop("incorrect file type input")
   #}
-  y = readr::read_csv(x)
+  show_col <-col_spec
+  y = readr::read_csv(x, show_col_types = show_col)
   y = as.data.frame(y)
-  z = remove_phi(readr::read_csv(x))
+  z = remove_phi(readr::read_csv(x, show_col_types = show_col))
 
   #super simple randomization, may want to make it more complex in future
   random_num <- sample(c(-4,-3,-2,-1,1,2), 1)
