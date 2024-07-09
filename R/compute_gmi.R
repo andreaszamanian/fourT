@@ -8,7 +8,7 @@
 #' @param y Time period length in weeks
 #' @param z Time period length in days
 #' @param exclude_bv Boolean. Compute GMI with high/low values as 400/___ respectively?
-#' @param allow_norm Boolean. Compute GMI with time periods 'rounded' to start of day
+#' @param cohort Boolean. Computing median? GMI for cohort, or GMI for individual
 #'
 #' @return
 #' @export
@@ -46,7 +46,7 @@ compute_gmi <- function(x,
 
   #this is not returning the correct thing, its returning date-times instead
   #of the integer levels
-  cut_frame_ints <- cut(frame$`bg_date_time`, breaks = breaks_input)
+  cut_frame_ints <- cut(frame$`bg_date_time`, breaks = breaks_input, labels = FALSE)
   cut_frame_ints <- as.vector.factor(cut_frame_ints)
 
   #CHECK
