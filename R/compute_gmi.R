@@ -8,7 +8,7 @@
 #' @param y Time period length in weeks
 #' @param z Time period length in days
 #' @param exclude_bv Boolean. Compute GMI with high/low values as 400/___ respectively?
-#' @param allow_norm Boolean. Compute GMI with time periods 'rounded' to start of day
+#' @param cohort Boolean. Computing median? GMI for cohort, or GMI for individual
 #'
 #' @return
 #' @export
@@ -24,6 +24,10 @@ compute_gmi <- function(x,
                         ) {
   frame <- x
   period_days <- (7*y)+z
+  if(period_days <= 0){
+    stop("Nonpositive number of days inputted. Please input
+         positive number of days")
+  }
   if(period_days != 1){
     period_days <- as.character(period_days)
     day_or_days <- "days"
@@ -34,15 +38,24 @@ compute_gmi <- function(x,
   }
   breaks_input <- paste(period_days, day_or_days, sep = " ")
 
-  #print(breaks_input)
+  #CHECK
+  print(breaks_input)
 
   #chop up frame into certain date-time ranges
   cut_frame <- frame
 
-  cut_frame_ints <- cut(frame$`bg_date_time`, breaks = breaks_input)
+  #this is not returning the correct thing, its returning date-times instead
+  #of the integer levels
+  cut_frame_ints <- cut(frame$`bg_date_time`, breaks = breaks_input, labels = FALSE)
+  cut_frame_ints <- as.vector.factor(cut_frame_ints)
+
+  #CHECK
+  print(cut_frame_ints)
+
   cut_frame <- as.vector.factor(cut(frame$`bg_date_time`, breaks = breaks_input))
 
   #setting up df
+  #GETTING ERROR HERE
   time_period_totals <- matrix(NA, nrow = max(cut_frame_ints), ncol = 5)
   colnames(time_period_totals)[which(names(time_period_totals) == "V1")] <- "time_period"
   colnames(time_period_totals)[which(names(time_period_totals) == "V2")] <- "bg_total"
