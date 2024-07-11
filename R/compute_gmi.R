@@ -25,45 +25,9 @@ compute_gmi <- function(x, inter, include_bv = T) {
     df <- convert_bv(df)
   }
 
-  #setting up df
-  #GETTING ERROR HERE
-  time_period_totals <- matrix(NA, nrow = max(df$inter, na.rm = T), ncol = 5)
-  colnames(time_period_totals)[which(names(time_period_totals) == "V1")] <- "time_period"
-  colnames(time_period_totals)[which(names(time_period_totals) == "V2")] <- "bg_total"
-  colnames(time_period_totals)[which(names(time_period_totals) == "V3")] <- "obs_count"
-  colnames(time_period_totals)[which(names(time_period_totals) == "V4")] <- "bg_mean"
-  colnames(time_period_totals)[which(names(time_period_totals) == "V5")] <- "gmi"
+  df_avg <- compute_avg_glucose(df)
 
-  #this logic seems inefficient?
-  i <- 1
-  #i is which time period
-
-  while(i <= max(df$inter, na.rm = T)){
-    time_period_totals[i, time_period] <- df$inter[i]
-
-    running_total = 0
-    running_count = 0
-    j <- 1
-    while(j <= length(df$inter)){
-      if(df$inter[j] == i){
-        if(is.na(bg_values_num) == FALSE){
-          running_total = running_total + df[j, bg_value_num]
-        }
-        #otherwise do nothing
-      }
-      j = j+1
-      #
-      time_period_totals[i , bg_total] <- running_total
-      running_count = running_count+1
-    }
-    time_period_totals[i, obs_count] <- running_count
-    i = i+1
-  }
-
-  time_period_totals$bg_mean <- (time_period_totals$bg_total)/(time_period_totals$obs_count)
-  gmi <- 3.31 + (0.02392* time_period_totals$bg_mean)
+  df_gmi <- df_avg %>%
+    dplyr::mutate(gmi = 3.31 + (0.02392* df_avg$bg_mean))
 }
-
-
-
 
