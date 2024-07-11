@@ -2,4 +2,6 @@
 
 export(compute_agp)
 export(compute_gmi)
+export(convert_bv)
 export(read_dexcom)
+export(set_inter)

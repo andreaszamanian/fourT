@@ -4,18 +4,16 @@
 \alias{compute_gmi}
 \title{Compute GMI}
 \usage{
-compute_gmi(x, y = 0, z = 0, exclude_bv = FALSE, allow_norm = TRUE)
+compute_gmi(x, inter, include_bv = T)
 }
 \arguments{
 \item{x}{A data frame (in the form of read_dexcom output)}
 
-\item{y}{Time period length in weeks}
+\item{inter}{Time interval for computation; e.g. every 14 days, every month, etc.}
 
-\item{z}{Time period length in days}
-
-\item{exclude_bv}{Boolean. Compute GMI with high/low values as 400/___ respectively?}
-
-\item{cohort}{Boolean. Computing median? GMI for cohort, or GMI for individual}
+\item{include_bv}{If TRUE, "High" and "Low" flags are converted to value 400 and 40
+respectively and used in computations. If FALSE, this conversion does not happen;
+computations ignore the "High" and "Low" flags}
 }
 \description{
 Computes the glucose management indicator for a given time frame.
