@@ -15,7 +15,7 @@ compute_gmi(x, y = 0, z = 0, exclude_bv = FALSE, allow_norm = TRUE)
 
 \item{exclude_bv}{Boolean. Compute GMI with high/low values as 400/___ respectively?}
 
-\item{allow_norm}{Boolean. Compute GMI with time periods 'rounded' to start of day}
+\item{cohort}{Boolean. Computing median? GMI for cohort, or GMI for individual}
 }
 \description{
 Computes the glucose management indicator for a given time frame.

@@ -1,7 +1,7 @@
 plot_agp <- function(dt_agp, months){
   dt_agp %>%
-    filter(inter %in% months) %>%
-    mutate(inter = factor(inter, levels = months),
+    dplyr::filter(inter %in% months) %>%
+    dplyr::mutate(inter = factor(inter, levels = months),
            bg_level = forcats::fct_rev(bg_level),
            bg_level = forcats::fct_recode(
              bg_level,
@@ -12,9 +12,9 @@ plot_agp <- function(dt_agp, months){
              '>250 mg/dL' = '[251,Inf]'),
            txt = paste0(round(100*bg_level_dist,1), '%')) %>%
     arrange(inter, desc(bg_level)) %>%
-    group_by(inter) %>%
-    mutate(cumpct = cumsum(bg_level_dist)) %>%
-    ungroup() %>%
+    dplyr::group_by(inter) %>%
+    dplyr::mutate(cumpct = cumsum(bg_level_dist)) %>%
+    dplyr::ungroup() %>%
     ggplot() +
     geom_col(aes(x = inter, y = bg_level_dist, fill = bg_level), color = 'black') +
     # geom_text(aes(x = inter, y = cumpct, label = txt)) +
