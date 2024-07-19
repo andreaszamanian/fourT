@@ -1,6 +1,6 @@
 #' Canonical bar plot for AGP Thermometers
 #'
-#' @param df read_dexcom output
+#' @param df Data frame, read_dexcom output
 #' @param inter time interval
 #'
 #' @return
@@ -22,11 +22,11 @@ plot_agp <- function(df, inter){
                               include.lowest = T, labels = T)) %>%
     dplyr::summarise(
       n = dplyr::n(),
-      range1 = sum(range == [0,54]),
-      range2 = sum(range == [54,70]),
-      range3 = sum(range == [70,181]),
-      range4 = sum(range == [181, 251]),
-      range5 = sum(range == [251, Inf]), #check this interval
+      range1 = sum(range ==1),
+      range2 = sum(range == 2),
+      range3 = sum(range == 3),
+      range4 = sum(range == 4),
+      range5 = sum(range == 5), #check this interval
        .groups = 'drop') %>%
     dplyr::mutate(across(range1:range5, ~ ./n))
 

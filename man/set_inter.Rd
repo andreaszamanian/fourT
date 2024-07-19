@@ -12,8 +12,9 @@ set_inter(x, interval)
 \item{interval}{Integer. Time interval, in days.}
 }
 \value{
-Input data frame with new column 'inter' which is an integer
-indicating which time interval an observation is from
+Original (input) data frame with new column 'inter'. 'inter' column contains integer
+indicating which time interval an observation is from (e.g. 1 indicates from first time interval, 2
+indicates from the second, etc.)
 }
 \description{
 Creates 'inter' column for read_dexcom ouptut data frame

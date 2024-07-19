@@ -4,10 +4,14 @@
 \alias{compute_avg_glucose}
 \title{Compute average glucose in given time periods}
 \usage{
-compute_avg_glucose(df)
+compute_avg_glucose(df, inter, human_run = T)
 }
 \arguments{
-\item{df}{}
+\item{df}{Data frame, read_dexcom output}
+
+\item{inter}{Time interval for computation; e.g. every 14 days, every month, etc.}
+
+\item{human_run}{Boolean. For internal use, default set to TRUE.}
 }
 \description{
 Compute average glucose in given time periods

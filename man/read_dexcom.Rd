@@ -7,7 +7,7 @@
 read_dexcom(x, col_spec = FALSE)
 }
 \arguments{
-\item{x}{A file (maybe filepath).}
+\item{x}{A file (or filepath). If using file name directly, please ensure working directory is correct.}
 }
 \value{
 A data frame.

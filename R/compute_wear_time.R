@@ -1,11 +1,11 @@
 #' Compute wear time for individual patient
 #'
-#' @param df Data frame, in format of read_dexcom output
+#' @param df Data frame, read_dexcom output
 #' @param start Date of CGM initiation
 #' @param end End of study
 #' @param fumonths Study window of interest (as months since T1D onset)
 #'
-#' @return Individual wear time
+#' @return Individual wear time in given time period (as proportion)
 #' @export
 #'
 #' @examples

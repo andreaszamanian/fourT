@@ -7,7 +7,7 @@
 compute_wear_time(df, start = "default", end = "default", fumonths)
 }
 \arguments{
-\item{df}{Data frame, in format of read_dexcom output}
+\item{df}{Data frame, read_dexcom output}
 
 \item{start}{Date of CGM initiation}
 
@@ -16,7 +16,7 @@ compute_wear_time(df, start = "default", end = "default", fumonths)
 \item{fumonths}{Study window of interest (as months since T1D onset)}
 }
 \value{
-Individual wear time
+Individual wear time in given time period (as proportion)
 }
 \description{
 Compute wear time for individual patient

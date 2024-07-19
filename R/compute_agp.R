@@ -1,8 +1,8 @@
 #' Compute AGP Thermometers
 #'
-#' @param x Data frame outputted by read_dexcom
+#' @param x Data frame, read_dexcom output
 #' @param inter Time interval for computation; e.g. every 14 days, every month, etc.
-#' @param include_bv Boolena. If TRUE, "High" and "Low" flags are converted to value 400 and 40
+#' @param include_bv Boolean. If TRUE, "High" and "Low" flags are converted to value 400 and 40
 #' respectively and used in computations. If FALSE, this conversion does not happen;
 #' computations ignore the "High" and "Low" flags
 #'

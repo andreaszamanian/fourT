@@ -7,7 +7,7 @@
 compute_gmi(x, inter, include_bv = T)
 }
 \arguments{
-\item{x}{A data frame (in the form of read_dexcom output)}
+\item{x}{Data frame, read_dexcom output}
 
 \item{inter}{Time interval for computation; e.g. every 14 days, every month, etc.}
 

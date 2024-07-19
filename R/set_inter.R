@@ -3,13 +3,14 @@
 #' @param x Input data frame
 #' @param interval Integer. Time interval, in days.
 #'
-#' @return Input data frame with new column 'inter' which is an integer
-#' indicating which time interval an observation is from
+#' @return Original (input) data frame with new column 'inter'. 'inter' column contains integer
+#' indicating which time interval an observation is from (e.g. 1 indicates from first time interval, 2
+#' indicates from the second, etc.)
 #'
 #' @export
 #'
 #' @examples
-set_inter <- function(x, interval){
+set_inter <- function(x, interval){ #maybe rename interval to inter for homogeneity?
   #creates new 'inter' column which records which interval an observation
   #is part of. Intervals are formed and then assigned a unique integer
   #(ascending, starting from 1), which is then assigned to the observation

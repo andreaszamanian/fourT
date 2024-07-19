@@ -7,7 +7,7 @@
 plot_agp(df, inter)
 }
 \arguments{
-\item{df}{read_dexcom output}
+\item{df}{Data frame, read_dexcom output}
 
 \item{inter}{time interval}
 }

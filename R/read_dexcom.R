@@ -1,7 +1,8 @@
 #' Reads Dexcom data
 #'
 #' Reads .csv file, deidentifies the data (removes PHI), reformats
-#' @param x A file (maybe filepath).
+#' @param x A file (or filepath). If using file name directly, please ensure working directory is correct.
+#' @param col_spec Boolean. If TRUE shows the column specifications, if FALSE does not.
 #'
 #' @return A data frame.
 #' @export
