@@ -15,8 +15,10 @@ BugReports: https://github.com/andreaszamanian/fourT/issues
 Imports: 
     dplyr,
     forcats,
+    ggplot2,
     lubridate,
-    readr
+    readr,
+    tibble
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
