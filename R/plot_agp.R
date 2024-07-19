@@ -19,14 +19,14 @@ plot_agp <- function(df, inter){
   dt_agp <- df %>%
     dplyr::group_by(inter) %>% #redundant
     dplyr::mutate(range = cut(bg_value_num, c(0, 54, 70, 181, 251, Inf),
-                              include.lowest = T, labels = T)) %>%
+                              include.lowest = T, labels = F)) %>%
     dplyr::summarise(
       n = dplyr::n(),
-      range1 = sum(range == [0,54]),
-      range2 = sum(range == [54,70]),
-      range3 = sum(range == [70,181]),
-      range4 = sum(range == [181, 251]),
-      range5 = sum(range == [251, Inf]), #check this interval
+      range1 = sum(range == 1),
+      range2 = sum(range == 2),
+      range3 = sum(range == 3),
+      range4 = sum(range == 4),
+      range5 = sum(range == 5),
        .groups = 'drop') %>%
     dplyr::mutate(across(range1:range5, ~ ./n))
 
@@ -35,8 +35,9 @@ plot_agp <- function(df, inter){
   print("Initial df computed ") ############################
   #can make all of this cleaner?
   i <- 1
-  while(i <= max(inter, na.rm = T)){
-    print("I am inside")
+  print(max(dt_agp$inter, na.rm = T))
+  while(i <= max(dt_agp$inter, na.rm = T)){
+    print("inside")
     #map each inter row to a new df
     j <- as.character(i)
 
@@ -54,7 +55,6 @@ plot_agp <- function(df, inter){
     k <- 1
     bg_level_dist_a <- vector(mode = "double", length = 5)
     while(k <= 5){
-      print(dt_agp_a[1, k+2])
       bg_level_dist_a[k] <- dt_agp_a[1, k+2]
       k = k+1
     }
@@ -73,7 +73,6 @@ plot_agp <- function(df, inter){
       print("Due to missing values plot cannot be produced")
     }
     else{
-      #make the plot for the df using method below
       make_plot(dt_agp_2)
       #store that plot somewhere?
     }
@@ -82,29 +81,39 @@ plot_agp <- function(df, inter){
   }
 }
 #bg_level_dist is the proportions for the time in whatever range
-#bg_level is which range in, I changed all calls to bg_level to 'range'
+#bg_level is which range in, I changed all calls of bg_level to 'range'
 
 make_plot <- function(df){
   print("making a plot") ############################
-  df %>%
-    dplyr::mutate(range = as.factor(df$range), #I lost the underlying levels in above code, need to fix this to make below work
+  df <- df %>%
+    dplyr::mutate(range = as.character(df$range)) #move this outside of the make_plot() function
+
+  df <- df %>%
+    dplyr::mutate(range = as.factor(df$range),
                   range = forcats::fct_recode(
                     range,
-                    '<54 mg/dL' = '[0,54)',
-                    '54-69 mg/dL' = '[54,70)',
-                    '70-180 mg/dL' = '[70,181)',
-                    '181-250 mg/dL' = '[181,251)',
-                    '>250 mg/dL' = '[251,Inf]'),
+                    '<54 mg/dL' = '1',
+                    '54-69 mg/dL' = '2',
+                    '70-180 mg/dL' = '3',
+                    '181-250 mg/dL' = '4',
+                    '>250 mg/dL' = '5'),
                   txt = paste0(round(100*bg_level_dist,1), '%')) %>%
-    dplyr::mutate(cumpct = cumsum(bg_level_dist)) %>% #not sure I need this
-    dplyr::ungroup() %>%
+    dplyr::mutate(cumpct = cumsum(bg_level_dist))
+
+    print(df)
+
+    df <- df %>%
+    dplyr::ungroup()
+
+
+    print(df %>%
     ggplot2::ggplot() +
-    ggplot2::geom_col(aes(x = "testing x", y = bg_level_dist, fill = range), color = 'black') +
-    #geom_text(aes(x = "testing x", y = cumpct, label = txt)) +
+    ggplot2::geom_col(ggplot2::aes(x = range, y = bg_level_dist, fill = range), color = 'black') +
+    ggplot2::geom_text(ggplot2::aes(x = range, y = cumpct, label = txt)) +
     ggplot2::labs(x = 'Time (months)',
                   y = '% Glucose Range',
                   fill = '') +
     ggplot2::scale_fill_manual(values = c('#fd8d3c', '#fecc5c', '#a6d96a', '#d7191c', '#a6611a')) +
-    ggplot2::scale_y_continuous(labels = scales::percent)
+    ggplot2::scale_y_continuous(labels = scales::percent))
 }
 
