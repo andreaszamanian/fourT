@@ -4,15 +4,16 @@
 \alias{compute_agp}
 \title{Compute AGP Thermometers}
 \usage{
-compute_agp(x, inter, include_bv = T)
+compute_agp(x, inter = 14, include_bv = T)
 }
 \arguments{
-\item{x}{Data frame with format identical to that outputted by read_dexcom}
+\item{x}{Data frame outputted by read_dexcom}
 
 \item{inter}{Time interval for computation; e.g. every 14 days, every month, etc.}
 
-\item{include_bv}{"High" and "Low" flags are converted to value 400 and 40
-respectively and used in computations}
+\item{include_bv}{Boolena. If TRUE, "High" and "Low" flags are converted to value 400 and 40
+respectively and used in computations. If FALSE, this conversion does not happen;
+computations ignore the "High" and "Low" flags}
 }
 \value{
 Data frame with AGP metrics
