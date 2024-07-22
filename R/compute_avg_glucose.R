@@ -1,6 +1,10 @@
 #' Compute average glucose in given time periods
 #'
 #' @param df
+#' @param start
+#' @param end
+#'
+#'
 #'
 #' @return
 #' @export
