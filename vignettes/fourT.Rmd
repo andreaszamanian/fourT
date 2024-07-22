@@ -1,0 +1,53 @@
+---
+title: "fourT"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{fourT}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fourT)
+```
+## Introduction
+
+What does this package do
+What are the various workflows (or just idela workflow)
+What is the documentation supported in package
+What is the structure of the package
+ - dependencies
+ - how cohort functions generalize individual patient functions
+How did I develop this package
+ - doing version control in github
+    -- show a bit of my github + r workflow
+    -- how can this be more helpful when it's not just one person using it
+    
+Full walkthrough on package use
+
+
+  
+
+```{r, include = FALSE}
+#x_0 <- read_dexcom("~/Desktop/R #Workspace/4T/fourT/vignettes/4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv", F)
+#x_1 <- compute_wear_time(x_0)
+#x_2 <- compute_agp(x_0, 1)
+#x_3 <- compute_gmi(x_0, 1)
+#x_4 <- compute_avg_glucose(x_0, 1)
+```
+
+One can read a patient file as follows ...
+```{r, message = FALSE}
+#read_dexcom(filepath, F)
+#View(read_dexcom(filepath, F))
+```
+
+
+

@@ -2,6 +2,10 @@
 #'
 #' @param x Data frame outputted by read_dexcom
 #' @param inter Time interval for computation; e.g. every 14 days, every month, etc.
+#' @param start Date-time. Computation window start date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
+#' @param end Date-time. Computation window end date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
 #' @param include_bv Boolena. If TRUE, "High" and "Low" flags are converted to value 400 and 40
 #' respectively and used in computations. If FALSE, this conversion does not happen;
 #' computations ignore the "High" and "Low" flags
@@ -11,7 +15,7 @@
 #' @export
 #'
 #' @examples
-compute_agp <- function(x, inter = 14, include_bv = T){
+compute_agp <- function(x, start = "default", end = "default", inter = 14, include_bv = T){
   #limitations/issues: cannot deal with NA values in `bg_value_num` column
   #when NA values are found in some time interval it does not ignore them
   #during computation, so just returns 'NA'
