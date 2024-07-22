@@ -32,7 +32,7 @@ compute_agp <- function(x, inter = 14, include_bv = T){
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)
 
   dt_tir <- df %>%
-    dplyr::group_by(df$inter) %>%
+    dplyr::group_by(inter) %>%
     dplyr::mutate(range = cut(bg_value_num, c(0, 54, 70, 181, 251, Inf),
                        include.lowest = T, labels = F)) %>%
     dplyr::summarise(
