@@ -4,12 +4,16 @@
 \alias{set_inter}
 \title{Creates 'inter' column for read_dexcom ouptut data frame}
 \usage{
-set_inter(df_dex, interval)
+set_inter(df_dex, interval, cut_reference = "end")
 }
 \arguments{
 \item{df_dex}{Data frame outputted by read_dexcom}
 
 \item{interval}{Integer. Time interval, in days.}
+
+\item{cut_reference}{Either "end" or "start". Which endpoint should intervals be cut
+starting from. Default value is "end", since usually computations are made in some
+'lookback' period.}
 }
 \value{
 Input data frame with new column 'inter' which is an integer

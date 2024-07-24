@@ -4,13 +4,7 @@
 \alias{compute_gmi}
 \title{Compute GMI}
 \usage{
-compute_gmi(
-  df_dex,
-  start = "0000-00-00 00:00:00",
-  end = "0000-00-00 00:00:00",
-  inter,
-  include_bv = T
-)
+compute_gmi(df_dex, start = "default", end = "default", inter, include_bv = T)
 }
 \arguments{
 \item{df_dex}{Data frame outputted by read_dexcom}
