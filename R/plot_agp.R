@@ -79,7 +79,7 @@ plot_agp <- function(df_dex, start = "default", end = "default", inter){
     if(is.na(dt_agp_2[1, 2]) == T || is.na(dt_agp_2[2, 2]) == T ||
        is.na(dt_agp_2[3, 2]) == T || is.na(dt_agp_2[4, 2]) == T ||
        is.na(dt_agp_2[5, 2]) == T){
-      print("Due to missing values plot cannot be produced")
+      stop("Due to missing values plot cannot be produced")
     }
     else{
       make_plot(dt_agp_2)
