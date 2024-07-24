@@ -37,14 +37,21 @@ compute_agp <- function(df_dex, start = "default", end = "default", inter = 14, 
     df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
   }
 
-
-
+  #address include_bv
   if(include_bv == T){
     df <- convert_bv(df_dex)
   }
   else{
     df <- df_dex
   }
+
+
+
+
+
+
+
+
   df <- set_inter(df, inter)
 
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)

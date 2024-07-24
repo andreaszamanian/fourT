@@ -18,7 +18,7 @@
 #' @export
 #'
 #' @examples
-compute_gmi <- function(df_dex, inter, include_bv = T) {
+compute_gmi <- function(df_dex, start = "default", end = "default", inter, include_bv = T) {
 
   #start and end values
   if(start == "default"){
@@ -31,23 +31,23 @@ compute_gmi <- function(df_dex, inter, include_bv = T) {
     df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
   }
 
+  #address include_bv
+  if(include_bv == T){
+    df <- convert_bv(df_dex)
+  }
+  else{
+    df <- df_dex
+  }
 
-
-
-
-
+  #set interval from `inter`
   if(inter <= 0){
     stop("Nonpositive timer interval inputted. Please input
          positive number of days")
   }
-
   df <- set_inter(df_dex, inter)
-  if(include_bv == T){
-    df <- convert_bv(df)
-  }
 
+  #compute gmi
   df_avg <- compute_avg_glucose(df)
-
   df_gmi <- df_avg %>%
     dplyr::mutate(gmi = 3.31 + (0.02392* df_avg$bg_mean))
 }
