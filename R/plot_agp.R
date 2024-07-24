@@ -1,6 +1,6 @@
 #' Canonical bar plot for AGP Thermometers
 #'
-#' @param df read_dexcom output
+#' @param df_dex Data frame outputted by read_dexcom
 #' @param start Date-time. Computation window start date. Value of "default" means
 #' function ignores this parameter at computes up to the start of the data.
 #' @param end Date-time. Computation window end date. Value of "default" means
@@ -11,27 +11,22 @@
 #' @export
 #'
 #' @examples
-plot_agp <- function(df, start = "default", end = "default", inter){
+plot_agp <- function(df_dex, start = "default", end = "default", inter){
 
   #start and end values
   if(start == "default"){
-    start_date <- lubridate::as_date(find_start_date(df))
+    start_date <- lubridate::as_date(find_start_date(df_dex))
   } else{start_date <- start}
   if(end == "default"){
-    end_date <- lubridate::as_date(find_end_date(df))
+    end_date <- lubridate::as_date(find_end_date(df_dex))
   } else{end_date <- end}
   if(start != "default" || end != "default"){
-    df <- truncate_window(df, start = start_date, end = end_date)
+    df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
   }
-
-
-
-
-
 
   #recompute the different ranges, in format of compute_agp,
   #but with individual ranges
-  df <- convert_bv(df)
+  df <- convert_bv(df_dex)
   df <- set_inter(df, interval = inter)
   df_1 <- df #for future use in n_value vector
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`) #write this into read_dexcom function

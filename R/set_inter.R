@@ -1,6 +1,6 @@
 #' Creates 'inter' column for read_dexcom ouptut data frame
 #'
-#' @param x Input data frame
+#' @param df_dex Data frame outputted by read_dexcom
 #' @param interval Integer. Time interval, in days.
 #'
 #' @return Input data frame with new column 'inter' which is an integer
@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-set_inter <- function(x, interval){
+set_inter <- function(df_dex, interval){
   #creates new 'inter' column which records which interval an observation
   #is part of. Intervals are formed and then assigned a unique integer
   #(ascending, starting from 1), which is then assigned to the observation
@@ -17,7 +17,7 @@ set_inter <- function(x, interval){
   #current limitations: cannot deal with non-integer inputs, e.g. 0.5
   #otherwise, working
 
-  df <- x
+  df <- df_dex
   if(interval <= 0){
     stop("Nonpositive number of days inputted. Please input
          positive number of days")

@@ -4,7 +4,7 @@
 #' GMI is computed following the results of:
 #' https://diabetesjournals.org/care/article/42/4/e60/36083/Glucose-Management-Indicator-GMI-Insights-and
 #'
-#' @param x A data frame (in the form of read_dexcom output)
+#' @param df_dex Data frame outputted by read_dexcom
 #' @param start Date-time. Computation window start date. Value of "default" means
 #' function ignores this parameter at computes up to the start of the data.
 #' @param end Date-time. Computation window end date. Value of "default" means
@@ -18,17 +18,17 @@
 #' @export
 #'
 #' @examples
-compute_gmi <- function(x, inter, include_bv = T) {
+compute_gmi <- function(df_dex, inter, include_bv = T) {
 
   #start and end values
   if(start == "default"){
-    start_date <- lubridate::as_date(find_start_date(df))
+    start_date <- lubridate::as_date(find_start_date(df_dex))
   } else{start_date <- start}
   if(end == "default"){
-    end_date <- lubridate::as_date(find_end_date(df))
+    end_date <- lubridate::as_date(find_end_date(df_dex))
   } else{end_date <- end}
   if(start != "default" || end != "default"){
-    x <- truncate_window(x, start = start_date, end = end_date)
+    df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
   }
 
 
@@ -41,7 +41,7 @@ compute_gmi <- function(x, inter, include_bv = T) {
          positive number of days")
   }
 
-  df <- set_inter(x, inter)
+  df <- set_inter(df_dex, inter)
   if(include_bv == T){
     df <- convert_bv(df)
   }

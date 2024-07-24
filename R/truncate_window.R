@@ -1,6 +1,6 @@
 #' Truncate time window for computation/plot
 #'
-#' @param df
+#' @param df_dex Data frame outputted by read_dexcom
 #' @param start
 #' @param end
 #'
@@ -9,7 +9,8 @@
 #'
 #' @examples
 #truncate_window <- function(df, start, end){
-truncate_window <- function(df, start, end) {
+truncate_window <- function(df_dex, start, end) {
+  df <- df_dex
   # Ensure start and end are in the correct time zone
   start <- as.POSIXct(start, format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
   end <- as.POSIXct(end, format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
