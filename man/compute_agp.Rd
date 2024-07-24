@@ -4,10 +4,16 @@
 \alias{compute_agp}
 \title{Compute AGP Thermometers}
 \usage{
-compute_agp(x, start = "default", end = "default", inter = 14, include_bv = T)
+compute_agp(
+  df_dex,
+  start = "default",
+  end = "default",
+  inter = 14,
+  include_bv = T
+)
 }
 \arguments{
-\item{x}{Data frame outputted by read_dexcom}
+\item{df_dex}{Data frame outputted by read_dexcom}
 
 \item{start}{Date-time. Computation window start date. Value of "default" means
 function ignores this parameter at computes up to the start of the data.}

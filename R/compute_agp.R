@@ -45,15 +45,15 @@ compute_agp <- function(df_dex, start = "default", end = "default", inter = 14, 
     df <- df_dex
   }
 
-
-
-
-
-
-
-
+  #set interval from `inter`
+  if(inter <= 0){
+    stop("Nonpositive timer interval inputted. Please input
+         positive number of days")
+  }
   df <- set_inter(df, inter)
 
+
+  #compute_agp
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)
 
   dt_tir <- df %>%

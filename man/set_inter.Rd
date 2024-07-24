@@ -4,10 +4,10 @@
 \alias{set_inter}
 \title{Creates 'inter' column for read_dexcom ouptut data frame}
 \usage{
-set_inter(x, interval)
+set_inter(df_dex, interval)
 }
 \arguments{
-\item{x}{Input data frame}
+\item{df_dex}{Data frame outputted by read_dexcom}
 
 \item{interval}{Integer. Time interval, in days.}
 }

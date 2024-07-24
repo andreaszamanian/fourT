@@ -29,10 +29,11 @@ plot_agp <- function(df_dex, start = "default", end = "default", inter){
   df <- convert_bv(df_dex)
   df <- set_inter(df, interval = inter)
   df_1 <- df #for future use in n_value vector
-  df$`bg_value_num` <- as.numeric(df$`bg_value_num`) #write this into read_dexcom function
+  df$`bg_value_num` <- as.numeric(df$`bg_value_num`) #write this into read_dexcom function?
+  #or will NA values be an issue
 
   dt_agp <- df %>%
-    dplyr::group_by(inter) %>% #redundant
+    dplyr::group_by(inter) %>% #redundant?
     dplyr::mutate(range = cut(bg_value_num, c(0, 54, 70, 181, 251, Inf),
                               include.lowest = T, labels = F)) %>%
     dplyr::summarise(

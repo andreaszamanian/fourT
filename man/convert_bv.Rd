@@ -4,10 +4,10 @@
 \alias{convert_bv}
 \title{Converts high/low flags to numeric values}
 \usage{
-convert_bv(x)
+convert_bv(df_dex)
 }
 \arguments{
-\item{x}{Data frame, read_dexcom output}
+\item{df_dex}{Data frame outputted by read_dexcom}
 }
 \value{
 Data frame with bg_value_num updated to include numeric values
