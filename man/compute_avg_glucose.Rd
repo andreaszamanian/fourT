@@ -7,7 +7,11 @@
 compute_avg_glucose(df)
 }
 \arguments{
-\item{df}{}
+\item{start}{Date-time. Computation window start date. Value of "default" means
+function ignores this parameter at computes up to the start of the data.}
+
+\item{end}{Date-time. Computation window end date. Value of "default" means
+function ignores this parameter at computes up to the start of the data.}
 }
 \description{
 Compute average glucose in given time periods

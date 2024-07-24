@@ -1,13 +1,34 @@
 #' Canonical bar plot for AGP Thermometers
 #'
 #' @param df read_dexcom output
+#' @param start Date-time. Computation window start date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
+#' @param end Date-time. Computation window end date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
 #' @param inter time interval
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plot_agp <- function(df, inter){
+plot_agp <- function(df, start = "default", end = "default", inter){
+
+  #start and end values
+  if(start == "default"){
+    start_date <- lubridate::as_date(find_start_date(df))
+  } else{start_date <- start}
+  if(end == "default"){
+    end_date <- lubridate::as_date(find_end_date(df))
+  } else{end_date <- end}
+  if(start != "default" || end != "default"){
+    df <- truncate_window(df, start = start_date, end = end_date)
+  }
+
+
+
+
+
+
   #recompute the different ranges, in format of compute_agp,
   #but with individual ranges
   df <- convert_bv(df)

@@ -9,7 +9,7 @@ compute_wear_time(df, start = "default", end = "default", fumonths)
 \arguments{
 \item{df}{Data frame, in format of read_dexcom output}
 
-\item{start}{Date of CGM initiation}
+\item{start}{Date of CGM initiation.}
 
 \item{end}{End of study}
 

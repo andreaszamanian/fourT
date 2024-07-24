@@ -1,12 +1,12 @@
 #' Compute AGP Thermometers
 #'
 #' @param x Data frame outputted by read_dexcom
-#' @param inter Time interval for computation; e.g. every 14 days, every month, etc.
 #' @param start Date-time. Computation window start date. Value of "default" means
 #' function ignores this parameter at computes up to the start of the data.
 #' @param end Date-time. Computation window end date. Value of "default" means
 #' function ignores this parameter at computes up to the start of the data.
-#' @param include_bv Boolena. If TRUE, "High" and "Low" flags are converted to value 400 and 40
+#' @param inter Time interval for computation; e.g. every 14 days, every month, etc.
+#' @param include_bv Boolean. If TRUE, "High" and "Low" flags are converted to value 400 and 40
 #' respectively and used in computations. If FALSE, this conversion does not happen;
 #' computations ignore the "High" and "Low" flags
 #'
@@ -24,6 +24,20 @@ compute_agp <- function(x, start = "default", end = "default", inter = 14, inclu
   #range, should probably change this
 
   #Otherwise, the functions works
+
+
+  #start and end values
+  if(start == "default"){
+    start_date <- lubridate::as_date(find_start_date(df))
+  } else{start_date <- start}
+  if(end == "default"){
+    end_date <- lubridate::as_date(find_end_date(df))
+  } else{end_date <- end}
+  if(start != "default" || end != "default"){
+    x <- truncate_window(x, start = start_date, end = end_date)
+  }
+
+
 
   if(include_bv == T){
     df <- convert_bv(x)
