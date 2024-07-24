@@ -4,10 +4,10 @@
 \alias{compute_wear_time}
 \title{Compute wear time for individual patient}
 \usage{
-compute_wear_time(df, start = "default", end = "default", fumonths)
+compute_wear_time(df_dex, start = "default", end = "default", fumonths)
 }
 \arguments{
-\item{df}{Data frame, in format of read_dexcom output}
+\item{df_dex}{Data frame outputted by read_dexcom}
 
 \item{start}{Date of CGM initiation.}
 

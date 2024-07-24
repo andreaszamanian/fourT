@@ -1,6 +1,6 @@
 #' Compute wear time for individual patient
 #'
-#' @param df Data frame, in format of read_dexcom output
+#' @param df_dex Data frame outputted by read_dexcom
 #' @param start Date of CGM initiation.
 #' @param end End of study
 #' @param fumonths Study window of interest (as months since T1D onset)
@@ -9,18 +9,18 @@
 #' @export
 #'
 #' @examples
-compute_wear_time <- function(df, start = "default", end = "default", fumonths){
+compute_wear_time <- function(df_dex, start = "default", end = "default", fumonths){
 
   #default start and end values, this method will be slightly simpler than
   #that for the computation functions
   if(start == "default"){
-    start_date <- lubridate::as_date(find_start_date(df))
+    start_date <- lubridate::as_date(find_start_date(df_dex))
   } else{start_date <- start}
   if(start == "default"){
-    end_date <- lubridate::as_date(find_end_date(df))
+    end_date <- lubridate::as_date(find_end_date(df_dex))
   } else{end_date <- end}
 
-  df <- convert_bv(df)
+  df <- convert_bv(df_dex)
   ncgm <- df %>%
     dplyr::mutate(date = lubridate::as_date(df$bg_date_time), .keep = "none") %>%
     dplyr::count(date)

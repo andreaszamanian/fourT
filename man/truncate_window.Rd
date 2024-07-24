@@ -4,9 +4,11 @@
 \alias{truncate_window}
 \title{Truncate time window for computation/plot}
 \usage{
-truncate_window(df, start, end)
+truncate_window(df_dex, start, end)
 }
 \arguments{
+\item{df_dex}{Data frame outputted by read_dexcom}
+
 \item{end}{}
 }
 \description{

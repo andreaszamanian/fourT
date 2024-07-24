@@ -1,14 +1,14 @@
 #' Converts high/low flags to numeric values
 #'
-#' @param x Data frame, read_dexcom output
+#' @param df_dex Data frame outputted by read_dexcom
 #'
 #' @return Data frame with bg_value_num updated to include numeric values
 #' associated with high/low flags
 #' @export
 #'
 #' @examples
-convert_bv <- function(x){
-  df <- x
+convert_bv <- function(df_dex){
+  df <- df_dex
   i <- 1
   while(i <= length(df$`bg_value_num`)){
     if(is.na(df$`bg_value_flag`[i]) == T){
