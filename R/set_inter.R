@@ -12,37 +12,50 @@
 #' @export
 #'
 #' @examples
-set_inter <- function(df_dex, interval, cut_reference = "end"){
+set_inter <- function(df_dex, interval = NULL, breaks = NULL, cut_reference = "end"){
   #creates new 'inter' column which records which interval an observation
   #is part of. Intervals are formed and then assigned a unique integer
   #(ascending, starting from 1), which is then assigned to the observation
 
   #current limitations: cannot deal with non-integer inputs, e.g. 0.5
   #also, issue when cut_reference = "end" and dealing with if there are NA values
+  #breaks cannot deal with non_integer values
   #otherwise, working
 
   df <- df_dex
-  if(interval <= 0){
-    stop("Nonpositive number of days inputted. Please input
-         positive number of days")
+  if(is.null(interval) == F){
+    if(interval <= 0){
+      stop("Nonpositive number of days inputted for 'inter' parameter. Please input
+         positive number of days for 'inter' parameter")
+    }
+    if(interval != 1){
+      period_days <- as.character(interval)
+      day_or_days <- "days"
+    }
+    if(interval == 1){
+      period_days <- as.character(interval)
+      day_or_days <- "day"
+    }
   }
-  if(interval != 1){
-    period_days <- as.character(interval)
-    day_or_days <- "days"
+
+
+  #using breaks argument
+  if(is.null(breaks) == T){
+    breaks_arg <- paste(period_days, day_or_days, sep = " ") #interval is now a string "# days"
   }
-  if(interval == 1){
-    period_days <- as.character(interval)
-    day_or_days <- "day"
+  else{
+    start = as.POSIXct(df$`bg_date_time`[1])
+    breaks_arg <- start + months(breaks)
   }
-  interval <- paste(period_days, day_or_days, sep = " ") #interval is now a string "# days"
+
   if(cut_reference == "end"){
-    interval_ints <- cut(rev(df$`bg_date_time`), breaks = interval, labels = FALSE)
+    interval_ints <- cut(rev(df$`bg_date_time`), breaks = breaks_arg, labels = FALSE)
     interval_ints <- max(interval_ints, na.rm = T) - (interval_ints-1)
   } else{
       if(cut_reference == "start"){
-        interval_ints <- cut(df$`bg_date_time`, breaks = interval, labels = FALSE)
+        interval_ints <- cut(df$`bg_date_time`, breaks = breaks_arg, labels = FALSE)
       } else{
-        stop("Incorrect cut_reference input")
+        stop("Incorrect cut_reference input, see function documentation")
       }
   }
 
