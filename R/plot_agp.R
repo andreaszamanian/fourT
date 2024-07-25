@@ -1,22 +1,39 @@
 #' Canonical bar plot for AGP Thermometers
 #'
-#' @param df read_dexcom output
+#' @param df_dex Data frame outputted by read_dexcom
+#' @param start Date-time. Computation window start date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
+#' @param end Date-time. Computation window end date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
 #' @param inter time interval
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plot_agp <- function(df, inter){
+plot_agp <- function(df_dex, start = "default", end = "default", inter){
+
+  #start and end values
+  if(start == "default"){
+    start_date <- lubridate::as_date(find_start_date(df_dex))
+  } else{start_date <- start}
+  if(end == "default"){
+    end_date <- lubridate::as_date(find_end_date(df_dex))
+  } else{end_date <- end}
+  if(start != "default" || end != "default"){
+    df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
+  }
+
   #recompute the different ranges, in format of compute_agp,
   #but with individual ranges
-  df <- convert_bv(df)
+  df <- convert_bv(df_dex)
   df <- set_inter(df, interval = inter)
   df_1 <- df #for future use in n_value vector
-  df$`bg_value_num` <- as.numeric(df$`bg_value_num`) #write this into read_dexcom function
+  df$`bg_value_num` <- as.numeric(df$`bg_value_num`) #write this into read_dexcom function?
+  #or will NA values be an issue
 
   dt_agp <- df %>%
-    dplyr::group_by(inter) %>% #redundant
+    dplyr::group_by(inter) %>% #redundant?
     dplyr::mutate(range = cut(bg_value_num, c(0, 54, 70, 181, 251, Inf),
                               include.lowest = T, labels = F)) %>%
     dplyr::summarise(
@@ -62,7 +79,7 @@ plot_agp <- function(df, inter){
     if(is.na(dt_agp_2[1, 2]) == T || is.na(dt_agp_2[2, 2]) == T ||
        is.na(dt_agp_2[3, 2]) == T || is.na(dt_agp_2[4, 2]) == T ||
        is.na(dt_agp_2[5, 2]) == T){
-      print("Due to missing values plot cannot be produced")
+      stop("Due to missing values plot cannot be produced")
     }
     else{
       make_plot(dt_agp_2)

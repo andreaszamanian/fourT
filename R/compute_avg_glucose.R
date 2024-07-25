@@ -1,16 +1,35 @@
 #' Compute average glucose in given time periods
 #'
-#' @param df
-#' @param start
-#' @param end
-#'
+#' @param df_dex Data frame outputted by read_dexcom
+#' @param start Date-time. Computation window start date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
+#' @param end Date-time. Computation window end date. Value of "default" means
+#' function ignores this parameter at computes up to the start of the data.
+#' @param from_gmi Boolean. For internal use only. TRUE if compute_avg_glucose is being called
+#' by the compute_gmi function. Otherwise FALSE.
 #'
 #'
 #' @return
 #' @export
 #'
 #' @examples
-compute_avg_glucose <- function(df){
+compute_avg_glucose <- function(df_dex, start = "default", end = "default", from_gmi = F){
+
+  if(from_gmi == F){
+    #start and end values
+    if(start == "default"){
+      start_date <- lubridate::as_date(find_start_date(df_dex))
+    } else{start_date <- start}
+    if(end == "default"){
+      end_date <- lubridate::as_date(find_end_date(df_dex))
+    } else{end_date <- end}
+    if(start != "default" || end != "default"){
+      df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
+    }
+  }
+  df <- df_dex
+
+
   #changes NA values to zero
   df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0)
 
@@ -25,3 +44,5 @@ compute_avg_glucose <- function(df){
       bg_mean = sum(bg_value_num)) %>%
     dplyr::mutate(across(bg_mean, ~ ./n))
 }
+
+#limitations: function assumes a priori there is a df$inter column
