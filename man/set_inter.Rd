@@ -4,7 +4,7 @@
 \alias{set_inter}
 \title{Creates 'inter' column for read_dexcom ouptut data frame}
 \usage{
-set_inter(df_dex, interval, cut_reference = "end")
+set_inter(df_dex, interval = NULL, breaks = NULL, cut_reference = "end")
 }
 \arguments{
 \item{df_dex}{Data frame outputted by read_dexcom}
