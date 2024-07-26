@@ -19,6 +19,55 @@ library(fourT)
 ```
 ## Introduction
 
+The fourT package serves to ...do this... . There are three groups of functions in the fourT package, computation functions, visualization functions and helper functions. All functions in the fourT package operate on two types of objects, individual patients and cohorts. An individual patient is a single patient's dexcom data file. A cohort is a collection of individual patients stored in a single folder.
+
+## Computation Functions
+
+There are four computation functions: 'compute_gmi', 'compute_agp', 'compute_wear_time', and 'compute_avg_glucose'. Each computation function operates without reference to another, except for 'compute_gmi', which calls 'compute_avg_glucose'; the 'compute_avg_glucose' function can also be called independently by the user. 
+
+Time control parameters: There are three primary ways in which to time window for computation can be modified:
+
+1. 'start' and 'end' parameters
+2. 'inter' parameter
+3. 'breaks' parameter
+
+The 'start' and 'end' parameters are straightforward, the user can manually enter start and end dates for the individual patient. If no start and end dates are inputted, the default values are ... something ... .
+
+The 'inter' parameter allows for the specification of regular interval windows in which the metric should be computed. When using the 'inter' parameter, the user should be intentional with their choice of 'cut_reference' value. The intervals are computed based on the start date or end date depending on the choice of 'cut_reference' value.
+
+Example 1: start = "default", end = "default", inter = 14, breaks = NULL, cut_reference = "end"
+
+<center>
+![Use of 'inter' parameter with default 'start 'and 'end' points](graphic1.png)
+</center>
+
+The 'breaks' parameter allows metrics to be computed at different time points, e.g. 1 month, 2 months, 6 months, 12 months.
+
+Example 2: start = "default", end = "default", breaks = c(0, 1, 3, 6, 12)
+
+<center>
+![Use of 'breaks' parameter with default 'start 'and 'end' points](graphic2.png)
+</center>
+
+Example 3:
+```{r, error = T}
+  df_dex <- read_dexcom("~/Desktop/R Workspace/4T/external files/4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv")
+  fourT::compute_gmi(df_dex = df_dex, start = "default", end = "default", inter = 14, breaks = c(0, 1, 3, 6, 12))
+```
+
+Both 'inter' and 'breaks' are specified, which is not allowed.
+
+## Visualization functions
+
+
+## Helper functions
+
+The only helper function currently in the package is the 'read_dexcom' function. This reads a patient .csv file, removes sensitive patient health information and converts the file into the correct format to apply computation and visualization functions.
+
+
+
+
+
 What does this package do
 What are the various workflows (or just idela workflow)
 What is the documentation supported in package

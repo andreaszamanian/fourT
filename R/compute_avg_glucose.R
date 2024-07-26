@@ -13,7 +13,8 @@
 #' @export
 #'
 #' @examples
-compute_avg_glucose <- function(df_dex, start = "default", end = "default", from_gmi = F){
+compute_avg_glucose <- function(df_dex, start = "default", end = "default", inter = NULL,
+                                breaks = NULL, from_gmi = F){
 
   if(from_gmi == F){
     #start and end values
@@ -26,12 +27,26 @@ compute_avg_glucose <- function(df_dex, start = "default", end = "default", from
     if(start != "default" || end != "default"){
       df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
     }
+
+    #setting interval
+    if(is.null(inter) == F && is.null(breaks) == F){
+      stop("Either specify 'inter' or 'breaks' parameter, but not both")
+    }
+    if(is.null(inter) == F){
+      #set interval from `inter`
+      df <- set_inter(df, inter = inter)
+    }
+    if(is.null(breaks) == F){
+      #set interval from `breaks`
+      df <- set_inter(df, breaks = breaks, cut_reference = "start")
+    }
   }
+
   df <- df_dex
 
-
   #changes NA values to zero
-  df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0)
+  df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0) #this is fine, but then should
+  #also keep some sort of NA count to not skew the mean
 
   #make numeric
   df$bg_value_num <- as.numeric(df$bg_value_num)
@@ -44,5 +59,3 @@ compute_avg_glucose <- function(df_dex, start = "default", end = "default", from
       bg_mean = sum(bg_value_num)) %>%
     dplyr::mutate(across(bg_mean, ~ ./n))
 }
-
-#limitations: function assumes a priori there is a df$inter column

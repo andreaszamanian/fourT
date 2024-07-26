@@ -17,7 +17,8 @@
 #' @export
 #'
 #' @examples
-compute_agp <- function(df_dex, start = "default", end = "default", inter = NULL, breaks = NULL, include_bv = T){
+compute_agp <- function(df_dex, start = "default", end = "default", inter = NULL,
+                        breaks = NULL, include_bv = T){
   #limitations/issues: cannot deal with NA values in `bg_value_num` column
   #when NA values are found in some time interval it does not ignore them
   #during computation, so just returns 'NA'
@@ -47,6 +48,7 @@ compute_agp <- function(df_dex, start = "default", end = "default", inter = NULL
     df <- df_dex
   }
 
+  #setting interval
   if(is.null(inter) == F && is.null(breaks) == F){
     stop("Either specify 'inter' or 'breaks' parameter, but not both")
   }
@@ -56,10 +58,8 @@ compute_agp <- function(df_dex, start = "default", end = "default", inter = NULL
   }
   if(is.null(breaks) == F){
     #set interval from `breaks`
-    df <- set_inter(df, breaks = breaks)
+    df <- set_inter(df, breaks = breaks, cut_reference = "start")
   }
-
-
 
   #compute_agp
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)

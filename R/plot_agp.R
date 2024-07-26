@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-plot_agp <- function(df_dex, start = "default", end = "default", inter){
+plot_agp <- function(df_dex, start = "default", end = "default", inter = NULL, breaks = NULL){
 
   #start and end values
   if(start == "default"){
@@ -24,10 +24,22 @@ plot_agp <- function(df_dex, start = "default", end = "default", inter){
     df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
   }
 
+  #setting interval
+  if(is.null(inter) == F && is.null(breaks) == F){
+    stop("Either specify 'inter' or 'breaks' parameter, but not both")
+  }
+  if(is.null(inter) == F){
+    #set interval from `inter`
+    df_dex <- set_inter(df_dex, inter = inter)
+  }
+  if(is.null(breaks) == F){
+    #set interval from `breaks`
+    df_dex <- set_inter(df_dex, breaks = breaks, cut_reference = "start")
+  }
+
   #recompute the different ranges, in format of compute_agp,
   #but with individual ranges
   df <- convert_bv(df_dex)
-  df <- set_inter(df, interval = inter)
   df_1 <- df #for future use in n_value vector
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`) #write this into read_dexcom function?
   #or will NA values be an issue

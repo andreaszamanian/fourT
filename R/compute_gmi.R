@@ -10,6 +10,8 @@
 #' @param end Date-time. Computation window end date. Value of "default" means
 #' function ignores this parameter at computes up to the start of the data.
 #' @param inter Time interval for computation; e.g. every 14 days, every month, etc.
+#' @param breaks Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+#' would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5. EDIT, does not describe well.
 #' @param include_bv If TRUE, "High" and "Low" flags are converted to value 400 and 40
 #' respectively and used in computations. If FALSE, this conversion does not happen;
 #' computations ignore the "High" and "Low" flags
@@ -18,7 +20,8 @@
 #' @export
 #'
 #' @examples
-compute_gmi <- function(df_dex, start = "default", end = "default", inter, include_bv = T) {
+compute_gmi <- function(df_dex, start = "default", end = "default", inter = NULL,
+                        breaks = NULL, include_bv = T) {
 
   #start and end values
   if(start == "default"){
@@ -39,12 +42,18 @@ compute_gmi <- function(df_dex, start = "default", end = "default", inter, inclu
     df <- df_dex
   }
 
-  #set interval from `inter`
-  if(inter <= 0){
-    stop("Nonpositive timer interval inputted. Please input
-         positive number of days")
+  #setting interval
+  if(is.null(inter) == F && is.null(breaks) == F){
+    stop("Either specify 'inter' or 'breaks' parameter, but not both")
   }
-  df <- set_inter(df_dex, inter)
+  if(is.null(inter) == F){
+    #set interval from `inter`
+    df <- set_inter(df, inter = inter)
+  }
+  if(is.null(breaks) == F){
+    #set interval from `breaks`
+    df <- set_inter(df, breaks = breaks, cut_reference = "start")
+  }
 
   #compute gmi
   df_avg <- compute_avg_glucose(df)
