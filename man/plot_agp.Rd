@@ -4,7 +4,13 @@
 \alias{plot_agp}
 \title{Canonical bar plot for AGP Thermometers}
 \usage{
-plot_agp(df_dex, start = "default", end = "default", inter)
+plot_agp(
+  df_dex,
+  start = "default",
+  end = "default",
+  inter = NULL,
+  breaks = NULL
+)
 }
 \arguments{
 \item{df_dex}{Data frame outputted by read_dexcom}

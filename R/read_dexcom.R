@@ -15,12 +15,11 @@ read_dexcom <- function(x, col_spec = FALSE) {
   y = readr::read_csv(x, show_col_types = show_col)
   y = as.data.frame(y)
   z = remove_phi(readr::read_csv(x, show_col_types = show_col))
-
   #super simple randomization, may want to make it more complex in future
   random_num <- sample(c(-4,-3,-2,-1,1,2), 1)
   z = shift_time(z, random_num)
-
   z = reformat(z, parse_id(x))
+  z = clean_data(z)
   return(z)
 }
 
@@ -41,16 +40,8 @@ reformat <- function(x, y){
   colnames(frame)[which(names(frame) == "Timestamp (YYYY-MM-DDThh:mm:ss)")] <- "bg_date_time" #renames time stamp column
   frame[, "record_id"] <- loc_record_id #makes new column with every row saying the record id
 
-  #frame1 <- frame
-  #View(frame1)
-
-
   colnames(frame)[which(names(frame) == "Glucose Value (mg/dL)")] <- "bg_value_num"
   frame[, "bg_value_flag"] <- NA #new column for boundary values "high" and "low"
-
-  #frame2 <- frame
-  #View(frame2)
-
   i <- 1
   while(i <= length(frame$Index)){
     if(is.na(frame[i, "bg_value_num"]) != TRUE &&
@@ -68,11 +59,6 @@ reformat <- function(x, y){
     }
     i = i+1
   }
-
-
-
-  #frame3 <- frame
-  #View(frame3)
 
   #if I want to just return the four doc columns
   #COMMENT THIS OUT if I want these columns back in
@@ -113,6 +99,13 @@ shift_time <- function(x, y){
   lubridate::year(datetime) <- current_year + shift_amount
   frame$`Timestamp (YYYY-MM-DDThh:mm:ss)` <- datetime
   return(frame)
+}
+
+clean_data <- function(df_dex){
+  na_rows <- stats::complete.cases(df_dex$bg_date_time)
+  df_dex <- df_dex %>%
+    dplyr::filter(na_rows == T)
+  return(df_dex)
 }
 
 

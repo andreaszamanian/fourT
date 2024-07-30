@@ -4,7 +4,15 @@
 \alias{compute_avg_glucose}
 \title{Compute average glucose in given time periods}
 \usage{
-compute_avg_glucose(df_dex, start = "default", end = "default", from_gmi = F)
+compute_avg_glucose(
+  df_dex,
+  start = "default",
+  end = "default",
+  lookback = 90,
+  inter = NULL,
+  breaks = NULL,
+  from_gmi = F
+)
 }
 \arguments{
 \item{df_dex}{Data frame outputted by read_dexcom}

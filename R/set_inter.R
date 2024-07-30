@@ -40,12 +40,15 @@ set_inter <- function(df_dex, interval = NULL, breaks = NULL, cut_reference = "e
 
 
   #using breaks argument
+
   if(is.null(breaks) == T){
     breaks_arg <- paste(period_days, day_or_days, sep = " ") #interval is now a string "# days"
   }
   else{
+    breaks = breaks * 2613600 #2613600 is 30.25 days (i.e. 1 month) in seconds (30.25*24*60*60)
     start = as.POSIXct(df$`bg_date_time`[1])
-    breaks_arg <- start + months(breaks)
+    breaks_arg <- start + lubridate::seconds(breaks)
+    print(breaks_arg)
   }
 
   if(cut_reference == "end"){

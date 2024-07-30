@@ -20,41 +20,16 @@
 #' @export
 #'
 #' @examples
-compute_gmi <- function(df_dex, start = "default", end = "default", inter = NULL,
+compute_gmi <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                         breaks = NULL, include_bv = T) {
 
-  #start and end values
-  if(start == "default"){
-    start_date <- lubridate::as_date(find_start_date(df_dex))
-  } else{start_date <- start}
-  if(end == "default"){
-    end_date <- lubridate::as_date(find_end_date(df_dex))
-  } else{end_date <- end}
-  if(start != "default" || end != "default"){
-    df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
-  }
-
-  #address include_bv
+  check_lookback(lookback)
+  df_dex <- change_window(df_dex = df_dex, start = start, end = end)
+  df <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks)
+  #change boundary values?
   if(include_bv == T){
-    df <- convert_bv(df_dex)
+    df <- convert_bv(df)
   }
-  else{
-    df <- df_dex
-  }
-
-  #setting interval
-  if(is.null(inter) == F && is.null(breaks) == F){
-    stop("Either specify 'inter' or 'breaks' parameter, but not both")
-  }
-  if(is.null(inter) == F){
-    #set interval from `inter`
-    df <- set_inter(df, inter = inter)
-  }
-  if(is.null(breaks) == F){
-    #set interval from `breaks`
-    df <- set_inter(df, breaks = breaks, cut_reference = "start")
-  }
-
   #compute gmi
   df_avg <- compute_avg_glucose(df)
   df_gmi <- df_avg %>%

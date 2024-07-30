@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples
-compute_agp <- function(df_dex, start = "default", end = "default", inter = NULL,
+compute_agp <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                         breaks = NULL, include_bv = T){
   #limitations/issues: cannot deal with NA values in `bg_value_num` column
   #when NA values are found in some time interval it does not ignore them
@@ -29,41 +29,15 @@ compute_agp <- function(df_dex, start = "default", end = "default", inter = NULL
   #Otherwise, the functions works
 
 
-  #start and end values
-  if(start == "default"){
-    start_date <- lubridate::as_date(find_start_date(df_dex))
-  } else{start_date <- start}
-  if(end == "default"){
-    end_date <- lubridate::as_date(find_end_date(df_dex))
-  } else{end_date <- end}
-  if(start != "default" || end != "default"){
-    df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
-  }
-
+  check_lookback(lookback)
+  df_dex <- change_window(df_dex = df_dex, start = start, end = end)
+  df <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks)
   #address include_bv
   if(include_bv == T){
-    df <- convert_bv(df_dex)
+    df <- convert_bv(df)
   }
-  else{
-    df <- df_dex
-  }
-
-  #setting interval
-  if(is.null(inter) == F && is.null(breaks) == F){
-    stop("Either specify 'inter' or 'breaks' parameter, but not both")
-  }
-  if(is.null(inter) == F){
-    #set interval from `inter`
-    df <- set_inter(df, inter = inter)
-  }
-  if(is.null(breaks) == F){
-    #set interval from `breaks`
-    df <- set_inter(df, breaks = breaks, cut_reference = "start")
-  }
-
   #compute_agp
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)
-
   dt_tir <- df %>%
     dplyr::group_by(inter) %>%
     dplyr::mutate(range = cut(bg_value_num, c(0, 54, 70, 181, 251, Inf),
