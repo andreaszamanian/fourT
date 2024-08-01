@@ -9,7 +9,7 @@ compute_avg_glucose(
   start = "default",
   end = "default",
   lookback = 90,
-  inter = NULL,
+  freq = NULL,
   breaks = NULL,
   from_gmi = F
 )

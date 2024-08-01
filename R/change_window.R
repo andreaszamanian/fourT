@@ -9,6 +9,7 @@ change_window <- function(df_dex, start, end){
   if(start != "default" || end != "default"){
     df_dex <- truncate_window(df_dex, start = start_date, end = end_date)
   }
+  return(df_dex)
 }
 
 

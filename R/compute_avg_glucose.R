@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-compute_avg_glucose <- function(df_dex, start = "default", end = "default", lookback = 90, inter = NULL,
+compute_avg_glucose <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                                 breaks = NULL, from_gmi = F){
   if(from_gmi == F){
     check_lookback(lookback)
@@ -21,19 +21,66 @@ compute_avg_glucose <- function(df_dex, start = "default", end = "default", look
     df_dex <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks)
   }
   df <- df_dex
+  if(from_gmi == T){
+    #changes NA values to zero
+    df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0) #this is fine, but then should
+    #also keep some sort of NA count to not skew the mean
 
-  #changes NA values to zero
-  df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0) #this is fine, but then should
-  #also keep some sort of NA count to not skew the mean
+    #make numeric
+    df$bg_value_num <- as.numeric(df$bg_value_num)
 
-  #make numeric
-  df$bg_value_num <- as.numeric(df$bg_value_num)
+    df_avg <- df %>%
+      dplyr::summarise(
+        n = dplyr::n(),
+        bg_total = sum(bg_value_num),
+        bg_mean = sum(bg_value_num)) %>%
+      dplyr::mutate(across(bg_mean, ~ ./n))
+  }
+  if(from_gmi == F){
+    if(is.null(freq) == F){
+      i <- 1
+      while(i <= max(df$inter)){
+        df_constrained <- dplyr::filter(df, inter == i)
+        end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
+        start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
+        df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
 
-  df_avg <- df %>%
-    dplyr::group_by(df$inter) %>%
-    dplyr::summarise(
-      n = dplyr::n(),
-      bg_total = sum(bg_value_num),
-      bg_mean = sum(bg_value_num)) %>%
-    dplyr::mutate(across(bg_mean, ~ ./n))
+        #changes NA values to zero
+        df_constrained_a$bg_value_num <- replace(df_constrained_a$bg_value_num, is.na(df_constrained_a$bg_value_num), 0) #this is fine, but then should
+        #also keep some sort of NA count to not skew the mean
+        #make numeric
+        df_constrained_a$bg_value_num <- as.numeric(df_constrained_a$bg_value_num)
+
+        df_running <- df_constrained_a %>%
+          dplyr::summarise(
+            n = dplyr::n(),
+            bg_total = sum(bg_value_num),
+            bg_mean = sum(bg_value_num)) %>%
+          dplyr::mutate(across(bg_mean, ~ ./n))
+
+        if(i == 1){
+          df_avg <- df_running
+        }
+        else{
+          df_avg <- dplyr::bind_rows(df_avg, df_running)
+        }
+        i <- i+1
+      }
+    }
+    if(is.null(breaks) == F){
+      #changes NA values to zero
+      df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0) #this is fine, but then should
+      #also keep some sort of NA count to not skew the mean
+      #make numeric
+      df$bg_value_num <- as.numeric(df$bg_value_num)
+
+      df_avg <- df %>%
+        dplyr::summarise(
+          n = dplyr::n(),
+          bg_total = sum(bg_value_num),
+          bg_mean = sum(bg_value_num)) %>%
+        dplyr::mutate(across(bg_mean, ~ ./n))
+    }
+  }
+  return(df_avg)
 }
