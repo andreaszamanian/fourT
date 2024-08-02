@@ -1,8 +1,7 @@
 make_plot <- function(df){
-  df <- df %>%
-    dplyr::mutate(range = as.character(df$range)) #move this outside of the make_plot() function
 
-  print(df %>%
+
+        df %>%
           dplyr::mutate(range = as.factor(df$range),
                         range = forcats::fct_recode(
                           range,
@@ -22,11 +21,12 @@ make_plot <- function(df){
                          axis.line = ggplot2::element_blank(),
                          axis.ticks = ggplot2::element_blank(),
                          axis.text.y = ggplot2::element_blank()) +
+          #the following code creates a bar
           ggplot2::geom_col(ggplot2::aes(x = "", y = bg_level_dist, fill = range), color = 'black') +
           ggplot2::geom_text(ggplot2::aes(x = "", y = cumpct, label = txt)) +
           ggplot2::labs(x = '',
                         y = '% Glucose Range',
                         fill = '') +
           ggplot2::scale_fill_manual(values = c('#6d071a', '#d7191c', '#4cbb17', '#fecc5c','#fd8d3c')) +
-          ggplot2::scale_y_continuous(labels = scales::percent))
+          ggplot2::scale_y_continuous(labels = scales::percent)
 }
