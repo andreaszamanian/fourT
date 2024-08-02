@@ -76,6 +76,20 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
           tir = sum(range == 3), .groups = 'drop') %>%
         dplyr::mutate(across(tbr2:tir, ~ ./n))
 
+      #checking enough data in lookback window
+      if(check_days_minimum(df_constrained_b) == F){
+        df_constrained_2 <- df_constrained_b%>%
+          dplyr::ungroup()%>% #probably not necessary
+          dplyr::summarise(
+            n = dplyr::n(),
+            tbr2 = NA,
+            tbr = NA,
+            tar = NA,
+            tar2 = NA,
+            tir = NA, .groups = 'drop')
+        print(paste0("Row ", i, " does not have enough data, values set to NA"))
+      }
+
       if(i == 1){
         df_tir <- df_constrained_2
       }
@@ -101,16 +115,6 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
   }
   return(df_tir)
 }
-
-
-
-#how to deal with incomplete time periods? e.g. if there are 3 days in the last
-#14 day window
-
-#could write a function 'check_complete_period' which looks if there
-#is an observation whose 'inter' value is one greater (limitation to this:
-#what if the data ends precisely at end of period, would return as incomplete
-#even though the period is complete)
 
 
 

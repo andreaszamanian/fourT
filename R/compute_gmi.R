@@ -50,7 +50,6 @@ compute_gmi <- function(df_dex, start = "default", end = "default", lookback = 9
 
       #compute gmi in that window
       df_avg <- compute_avg_glucose(df_dex = df_constrained_a,from_gmi = T)
-      print(df_avg)
 
       df_gmi <- df_avg %>%
         dplyr::mutate(gmi = 3.31 + (0.02392* df_avg$bg_mean))
