@@ -17,9 +17,48 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(fourT)
 ```
+
+```{r, include = F}
+library(magrittr)
+```
 ## Introduction
 
 The fourT package serves to ...do this... . There are three groups of functions in the fourT package, computation functions, visualization functions and helper functions. All functions in the fourT package operate on two types of objects, individual patients and cohorts. An individual patient is a single patient's dexcom data file. A cohort is a collection of individual patients stored in a single folder.
+
+## Example Workflow
+
+To use most of the functions in the fourT, the user must first read the patient file using the 'read_dexcom' function:
+
+```{r}
+  df_dex1 <- read_dexcom("~/Desktop/R Workspace/4T/external files/4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv")
+```
+
+This cleans entries which may have the date-time incorrectly inputted (i.e. NA values), removes PHI, and slightly reformats the data. This can be seen below.
+
+```{r, include = F}
+  View(df_dex1)
+```
+
+The default setting of 'read_dexcom' is without deidentification. This reflects usage inside of the QSU where deidenitfying the data may not be an issue. When working with outside collaborators the deidentification can be switched on by setting the 'deid' parameter to TRUE.
+
+```{r}
+  df_dex2 <- read_dexcom("~/Desktop/R Workspace/4T/external files/4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv", deid = T)
+```
+
+After reading the patient file, any of the computation or visualization functions can be applied independently. One can supply different ways of breaking up the time window for different functions in thisk way.
+
+```{r}
+  compute_agp(df_dex1, freq = 14)
+  compute_gmi(df_dex1, breaks = c(0, 1, 3, 6, 7.5, 9, 12))
+  compute_wear_time(df_dex1, start = , end = )
+```
+
+If one would like to instead compute all of these metrics at the same time, with the same time window partition they can simply call the wrapping function 'cgm_summaries()'. This function can also be used to simultaneously create the canonical AGP thermometer plot. 
+
+```{r}
+  cgm_summaries(df_dex1, breaks = c(0, 1, 3, 6, 7.5, 9, 12))
+```
+
 
 ## Computation Functions
 

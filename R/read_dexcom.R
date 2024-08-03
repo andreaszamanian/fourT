@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @examples
-read_dexcom <- function(x, col_spec = FALSE) {
+read_dexcom <- function(x, col_spec = FALSE, deid = F) {
   #if(x != .csv file){
     #stop("incorrect file type input")
   #}
@@ -15,9 +15,10 @@ read_dexcom <- function(x, col_spec = FALSE) {
   y = readr::read_csv(x, show_col_types = show_col)
   y = as.data.frame(y)
   z = remove_phi(readr::read_csv(x, show_col_types = show_col))
-  #super simple randomization, may want to make it more complex in future
-  random_num <- sample(c(-4,-3,-2,-1,1,2), 1)
-  z = shift_time(z, random_num)
+  if(deid == T){
+    random_num <- sample(c(-4,-3,-2,-1,1,2), 1)
+    z = shift_time(z, random_num)
+  }
   z = reformat(z, parse_id(x))
   z = clean_data(z)
   return(z)
