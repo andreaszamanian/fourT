@@ -31,29 +31,25 @@ compute_gmi <- function(df_dex, start = "default", end = "default", lookback = 9
     df <- convert_bv(df)
   }
 
-  if(is.null(freq) == F){
     i <- 1
     while(i <= max(df$inter)){
-      #find last date in that inter
       df_constrained <- dplyr::filter(df, inter == i)
-
       end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
-      #<- lubridate::as_date(find_end_date(df_constrained))
-      #use to compute start of window
-      #start_date <- lubridate::as_date(end_date - lubridate::seconds(lookback*86400))
       start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
-      #find all observations within lookback window before last date
-
       df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
-
       df_constrained_a$`bg_value_num` <- as.numeric(df_constrained_a$`bg_value_num`)
-
       #compute gmi in that window
       df_avg <- compute_avg_glucose(df_dex = df_constrained_a,from_gmi = T)
-
       df_gmi <- df_avg %>%
         dplyr::mutate(gmi = 3.31 + (0.02392* df_avg$bg_mean))
 
+      #checking enough data in lookback window
+      if(check_days_minimum(df_constrained_a) == F){
+        df_avg <- compute_avg_glucose(df_dex = df_constrained_a,from_gmi = T)
+        df_gmi <- df_avg %>%
+          dplyr::mutate(gmi = NA)
+        print(paste0("Time interval ", i, " does not have enough data, values set to NA"))
+      }
       if(i == 1){
         df_final <- df_gmi
       }
@@ -63,13 +59,6 @@ compute_gmi <- function(df_dex, start = "default", end = "default", lookback = 9
       i <- i+1
     }
     df_gmi <- df_final #so there is a single return statement
-  }
-  if(is.null(breaks) == F){
-    #compute gmi
-    df_avg <- compute_avg_glucose(df_dex = df,from_gmi = T)
-    df_gmi <- df_avg %>%
-      dplyr::mutate(gmi = 3.31 + (0.02392* df_avg$bg_mean))
-  }
   return(df_gmi)
 }
 
