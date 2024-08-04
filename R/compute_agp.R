@@ -19,16 +19,6 @@
 #' @examples
 compute_agp <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                         breaks = NULL, include_bv = T){
-  #limitations/issues: cannot deal with NA values in `bg_value_num` column
-  #when NA values are found in some time interval it does not ignore them
-  #during computation, so just returns 'NA'
-
-  #the ouput contains the df$inter integer value, as opposed to some data/time
-  #range, should probably change this
-
-  #Otherwise, the functions works
-
-
   check_lookback(lookback)
   df_dex <- change_window(df_dex = df_dex, start = start, end = end)
   df <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks)
@@ -40,51 +30,93 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
 
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)
 
-  #compute_agp
-  #at this point above functions should have already checked that only one
-  #of 'inter' and 'breaks' has been specified by user
+    previous_end_date <- as.POSIXct("0001-01-01 01:01:01")
     i <- 1
     while(i <= max(df$inter)){
       #find last date in that inter
       df_constrained <- dplyr::filter(df, inter == i)
-      end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
-      start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
-      #find all observations within lookback window before last date
-      print(paste("Start date:", start_date))
-      print(paste("End date:", end_date))
-      print(paste("Number of rows in df_constrained:", nrow(df_constrained)))
+      print(nrow(df_constrained))
+      if (nrow(df_constrained) > 0) {
+        end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
+        start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
+        if (!is.na(start_date) && !is.na(end_date)) { #then actually do something
+          df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
+          df_constrained_b <- df_constrained_a%>%
+            dplyr::mutate(range = cut(df_constrained_a$bg_value_num, c(0, 54, 70, 181, 251, Inf),
+                                      include.lowest = T, labels = F))
 
 
 
-      df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
-      df_constrained_b <- df_constrained_a%>%
-        dplyr::mutate(range = cut(df_constrained_a$bg_value_num, c(0, 54, 70, 181, 251, Inf),
-                                  include.lowest = T, labels = F))
-
-      #compute agp in that window
-      df_constrained_2 <- df_constrained_b%>%
-        dplyr::ungroup()%>% #probably not necessary
-        dplyr::summarise(
-          n = dplyr::n(),
-          tbr2 = sum(range == 1),
-          tbr = sum(range <= 2),
-          tar = sum(range >= 4),
-          tar2 = sum(range == 5),
-          tir = sum(range == 3), .groups = 'drop') %>%
-        dplyr::mutate(across(tbr2:tir, ~ ./n))
-
-      #checking enough data in lookback window
-      if(check_days_minimum(df_constrained_b) == F){
-        df_constrained_2 <- df_constrained_b%>%
-          dplyr::ungroup()%>% #probably not necessary
-          dplyr::summarise(
-            n = dplyr::n(),
-            tbr2 = NA,
-            tbr = NA,
-            tar = NA,
-            tar2 = NA,
-            tir = NA, .groups = 'drop')
-        print(paste0("Time interval ", i, " does not have enough data, values set to NA"))
+          #checking enough data in lookback window
+          if(check_days_minimum(df_constrained_b) == F){
+            df_constrained_2 <- df_constrained_b%>%
+              dplyr::ungroup()%>% #probably not necessary
+              dplyr::summarise(
+                n = dplyr::n(),
+                tbr2 = NA,
+                tbr = NA,
+                tar = NA,
+                tar2 = NA,
+                tir = NA, .groups = 'drop')
+            print(paste0("Time interval ", i, " does not have enough data, values set to NA"))
+          }
+          else{
+            #compute agp in that window
+            df_constrained_2 <- df_constrained_b%>%
+              dplyr::ungroup()%>% #probably not necessary
+              dplyr::summarise(
+                n = dplyr::n(),
+                tbr2 = sum(range == 1),
+                tbr = sum(range <= 2),
+                tar = sum(range >= 4),
+                tar2 = sum(range == 5),
+                tir = sum(range == 3), .groups = 'drop') %>%
+              dplyr::mutate(across(tbr2:tir, ~ ./n))
+          }
+        }
+        #find all observations within lookback window before last date
+        print(paste("Start date:", start_date))
+        print(paste("End date:", end_date))
+        print(paste("Number of rows in df_constrained:", nrow(df_constrained)))
+      }
+      else{
+        if(nrow(df_constrained) == 0){
+            end_date <- as.POSIXct(previous_end_date)
+            start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
+            print("no time1")
+            print(start_date)
+            print(end_date)
+            print("no time2")
+            df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
+            if(nrow(df_constrained_a) > 0){
+              df_constrained_b <- df_constrained_a%>%
+                dplyr::mutate(range = cut(df_constrained_a$bg_value_num, c(0, 54, 70, 181, 251, Inf),
+                                          include.lowest = T, labels = F))
+              #compute agp in that window
+              df_constrained_2 <- df_constrained_b%>%
+                dplyr::ungroup()%>% #probably not necessary
+                dplyr::summarise(
+                  n = dplyr::n(),
+                  tbr2 = sum(range == 1),
+                  tbr = sum(range <= 2),
+                  tar = sum(range >= 4),
+                  tar2 = sum(range == 5),
+                  tir = sum(range == 3), .groups = 'drop') %>%
+                dplyr::mutate(across(tbr2:tir, ~ ./n))
+            }
+            else{
+              df_constrained_2 <- df_constrained_b%>%
+                dplyr::ungroup()%>% #probably not necessary
+                dplyr::summarise(
+                  n = dplyr::n(),
+                  tbr2 = NULL,
+                  tbr = NULL,
+                  tar = NULL,
+                  tar2 = NULL,
+                  tir = NULL, .groups = 'drop')
+              print("Empty lookback window.")
+            }
+        }
       }
 
       if(i == 1){
@@ -94,6 +126,7 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
         df_tir <- dplyr::bind_rows(df_tir, df_constrained_2)
       }
       i <- i+1
+      previous_end_date <- end_date
     }
   return(df_tir)
 }
