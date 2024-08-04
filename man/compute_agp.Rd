@@ -23,14 +23,14 @@ function ignores this parameter and computes up to the start of the data.}
 \item{end}{Date-time. Computation window end date. Value of "default" means
 function ignores this parameter at computes up to the start of the data.}
 
-\item{breaks}{Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
-would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5. EDIT, does not describe well.}
+\item{freq}{Time interval for computation; e.g. every 14 days, every month, etc.}
+
+\item{breaks}{Vector. Specify range computations manually in months, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.}
 
 \item{include_bv}{Boolean. If TRUE, "High" and "Low" flags are converted to value 400 and 40
 respectively and used in computations. If FALSE, this conversion does not happen;
 computations ignore the "High" and "Low" flags}
-
-\item{inter}{Time interval for computation; e.g. every 14 days, every month, etc.}
 }
 \value{
 Data frame with AGP metrics

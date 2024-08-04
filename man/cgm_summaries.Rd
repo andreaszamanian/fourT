@@ -11,7 +11,8 @@ cgm_summaries(
   lookback = 90,
   freq = NULL,
   breaks = NULL,
-  include_bv = T
+  include_bv = T,
+  plot = F
 )
 }
 \arguments{

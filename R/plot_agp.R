@@ -61,7 +61,7 @@ compute_agp_for_plot <- function(df_dex, start = "default", end = "default", loo
       #<- lubridate::as_date(find_end_date(df_constrained))
       #use to compute start of window
       #start_date <- lubridate::as_date(end_date - lubridate::seconds(lookback*86400))
-      start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
+      start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400), tz = "UTC")
       #find all observations within lookback window before last date
 
       df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))

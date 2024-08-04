@@ -4,7 +4,7 @@
 \alias{read_dexcom}
 \title{Reads Dexcom data}
 \usage{
-read_dexcom(x, col_spec = FALSE)
+read_dexcom(x, col_spec = FALSE, deid = F)
 }
 \arguments{
 \item{x}{A file (maybe filepath).}

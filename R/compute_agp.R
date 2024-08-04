@@ -21,7 +21,13 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
                         breaks = NULL, include_bv = T){
   check_lookback(lookback)
   df_dex <- change_window(df_dex = df_dex, start = start, end = end)
-  df <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks)
+  if(is.null(breaks) == F){
+    df <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks)
+  }
+  if(is.null(freq) == F){
+    df <- partition_window(df_dex = df_dex, freq = freq, breaks = breaks, compute = T)
+  }
+
 
   #address include_bv
   if(include_bv == T){
@@ -30,16 +36,22 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
 
   df$`bg_value_num` <- as.numeric(df$`bg_value_num`)
 
-    previous_end_date <- as.POSIXct("0001-01-01 01:01:01")
-    i <- 1
+  previous_end_date <- as.POSIXct("0001-01-01 01:01:01", tz = "UTC")
+  if(is.null(freq) == F){
+  i <- 1
     while(i <= max(df$inter)){
       #find last date in that inter
       df_constrained <- dplyr::filter(df, inter == i)
-      print(nrow(df_constrained))
+      #print(nrow(df_constrained))
       if (nrow(df_constrained) > 0) {
-        end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
-        start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
-        if (!is.na(start_date) && !is.na(end_date)) { #then actually do something
+        #end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
+        end_date <- as.POSIXct(df_constrained$labs[nrow(df_constrained)], tz = "UTC")
+        end_date <- end_date + lubridate::seconds(86400)
+        start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400), tz = "UTC")
+        #start_date <- as.POSIXct(end_date - lubridate::days(freq), tz = "UTC")
+        if (!is.na(start_date) && !is.na(end_date)) {
+
+          #expand to entire lookback window
           df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
           df_constrained_b <- df_constrained_a%>%
             dplyr::mutate(range = cut(df_constrained_a$bg_value_num, c(0, 54, 70, 181, 251, Inf),
@@ -75,18 +87,13 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
           }
         }
         #find all observations within lookback window before last date
-        print(paste("Start date:", start_date))
-        print(paste("End date:", end_date))
-        print(paste("Number of rows in df_constrained:", nrow(df_constrained)))
+        #print(paste("Start date:", start_date))
+        #print(paste("End date:", end_date))
+        #print(paste("Number of rows in df_constrained:", nrow(df_constrained)))
       }
-      else{
-        if(nrow(df_constrained) == 0){
-            end_date <- as.POSIXct(previous_end_date)
-            start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
-            print("no time1")
-            print(start_date)
-            print(end_date)
-            print("no time2")
+      if(nrow(df_constrained) == 0){
+            end_date <- as.POSIXct(previous_end_date, tz = "UTC")
+            start_date <- as.POSIXct(end_date - lubridate::seconds((lookback - freq)*86400), tz = "UTC")
             df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
             if(nrow(df_constrained_a) > 0){
               df_constrained_b <- df_constrained_a%>%
@@ -117,7 +124,6 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
               print("Empty lookback window.")
             }
         }
-      }
 
       if(i == 1){
         df_tir <- df_constrained_2
@@ -127,7 +133,26 @@ compute_agp <- function(df_dex, start = "default", end = "default", lookback = 9
       }
       i <- i+1
       previous_end_date <- end_date
+      print(end_date)
     }
+  }
+
+  if(is.null(breaks) == F){
+    df_tir <- df %>%
+      dplyr::group_by(inter) %>%
+      dplyr::mutate(range = cut(bg_value_num, c(0, 54, 70, 181, 251, Inf),
+                                include.lowest = T, labels = F)) %>%
+      dplyr::summarise(
+        n = dplyr::n(),
+        tbr2 = sum(range == 1),
+        tbr = sum(range <= 2),
+        tar = sum(range >= 4),
+        tar2 = sum(range == 5),
+        tir = sum(range == 3), .groups = 'drop') %>%
+      dplyr::mutate(across(tbr2:tir, ~ ./n))
+  }
+
+
   return(df_tir)
 }
 

@@ -39,19 +39,9 @@ compute_avg_glucose <- function(df_dex, start = "default", end = "default", look
         bg_total = sum(bg_value_num),
         bg_mean = sum(bg_value_num)) %>%
       dplyr::mutate(across(bg_mean, ~ ./n))
-
-    #checking enough data in lookback window, but not print statement, that is handled by compute_gmi
-    #also no iteration, because compute_ag_glucose is inside while loop in compute_gmi
-    if(check_days_minimum(df) == F){
-      df_avg <- df %>%
-        dplyr::summarise(
-          n = dplyr::n(),
-          bg_total = NA,
-          bg_mean = NA)
     }
 
   #not from gmi
-  }
   if(from_gmi == F){
       #changes NA values to zero
       df$bg_value_num <- replace(df$bg_value_num, is.na(df$bg_value_num), 0) #this is fine, but then should
@@ -62,7 +52,7 @@ compute_avg_glucose <- function(df_dex, start = "default", end = "default", look
       while(i <= max(df$inter)){
         df_constrained <- dplyr::filter(df, inter == i)
         end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
-        start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400))
+        start_date <- as.POSIXct(end_date - lubridate::seconds(lookback*86400), tz = "UTC")
         df_constrained_a <- dplyr::filter(df, dplyr::between(df$bg_date_time, start_date, end_date))
 
         #changes NA values to zero

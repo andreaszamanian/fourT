@@ -1,3 +1,11 @@
+#' Find end of inter period
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#'
+#' @examples
 find_end_date <- function(x){
   i = length(x$bg_date_time)
   check <- F

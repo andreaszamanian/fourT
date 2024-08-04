@@ -19,7 +19,8 @@ Imports:
     lubridate,
     readr,
     stats,
-    tibble
+    tibble,
+    utils
 Suggests: 
     knitr,
     rmarkdown,

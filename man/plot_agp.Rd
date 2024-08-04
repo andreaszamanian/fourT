@@ -8,7 +8,8 @@ plot_agp(
   df_dex,
   start = "default",
   end = "default",
-  inter = NULL,
+  lookback = 90,
+  freq = NULL,
   breaks = NULL
 )
 }
