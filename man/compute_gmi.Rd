@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_gmi.R
 \name{compute_gmi}
 \alias{compute_gmi}
-\title{Compute GMI}
+\title{Compute glucose management indicator (GMI)}
 \usage{
 compute_gmi(
   df_dex,
@@ -11,29 +11,48 @@ compute_gmi(
   lookback = 90,
   freq = NULL,
   breaks = NULL,
-  include_bv = T
+  include_bv = TRUE
 )
 }
 \arguments{
 \item{df_dex}{Data frame outputted by read_dexcom}
 
 \item{start}{Date-time. Computation window start date. Value of "default" means
-function ignores this parameter at computes up to the start of the data.}
+function ignores this parameter and computes up to the start of the data.}
 
 \item{end}{Date-time. Computation window end date. Value of "default" means
-function ignores this parameter at computes up to the start of the data.}
+function ignores this parameter and computes up to the start of the data.}
+
+\item{lookback}{Number of days to look back for GMI computations. Defaults to 90 days.}
+
+\item{freq}{Time interval for computation; e.g. every 14 days, every month, etc.}
 
 \item{breaks}{Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
-would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5. EDIT, does not describe well.}
+would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.}
 
 \item{include_bv}{If TRUE, "High" and "Low" flags are converted to value 400 and 40
 respectively and used in computations. If FALSE, this conversion does not happen;
-computations ignore the "High" and "Low" flags}
-
-\item{inter}{Time interval for computation; e.g. every 14 days, every month, etc.}
+computations ignore the "High" and "Low" flags.}
+}
+\value{
+Data frame with GMI metrics
 }
 \description{
-Computes the glucose management indicator for a given time frame.
-GMI is computed following the results of:
+Computes the GMI for a given patient.
+The formula for GMI comes from:
 https://diabetesjournals.org/care/article/42/4/e60/36083/Glucose-Management-Indicator-GMI-Insights-and
+}
+\examples{
+bg_date_time <- as.POSIXct(c("2020-01-01 01:01:01", "2020-03-01 01:01:01",
+"2020-06-01 01:01:01", "2020-07-01 01:01:01", "2020-09-09 01:01:01", "2020-12-09 01:01:01",
+"2021-01-01 01:01:01"), tz = "UTC")
+bg_value_num <- c(67, 100, 150, 123, 124, 80, 300)
+record_id <- c(010101, 010101, 010101, 010101, 010101, 010101, 010101)
+bg_value_flag <- c(NA, NA, NA, NA, NA, NA, NA)
+
+
+df <- dplyr::tibble(bg_date_time = bg_date_time, bg_value_num = bg_value_num, record_id = record_id,
+bg_value_flag = bg_value_flag)
+
+compute_gmi(df, breaks = c(0, 1.5, 4.5, 7, 10, 13))
 }

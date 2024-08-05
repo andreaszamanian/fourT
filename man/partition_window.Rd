@@ -4,7 +4,7 @@
 \alias{partition_window}
 \title{Partition the time window into intervals or breaks}
 \usage{
-partition_window(df_dexcom, freq = NULL, breaks = NULL)
+partition_window(df_dexcom, freq = NULL, breaks = NULL, compute = F)
 }
 \arguments{
 \item{breaks}{}

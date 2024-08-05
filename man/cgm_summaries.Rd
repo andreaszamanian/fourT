@@ -16,8 +16,47 @@ cgm_summaries(
 )
 }
 \arguments{
-\item{include_bv}{}
+\item{df_dex}{Data frame outputted by read_dexcom}
+
+\item{start}{Date-time. Computation window start date. Value of "default" means
+function ignores this parameter and computes up to the start of the data.}
+
+\item{end}{Date-time. Computation window end date. Value of "default" means
+function ignores this parameter and computes up to the start of the data.}
+
+\item{lookback}{Number of days to look back for GMI computations. Defaults to 90 days.}
+
+\item{freq}{Time interval for computation; e.g. every 14 days, every month, etc.}
+
+\item{breaks}{Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.}
+
+\item{include_bv}{If TRUE, "High" and "Low" flags are converted to value 400 and 40
+respectively and used in computations. If FALSE, this conversion does not happen;
+computations ignore the "High" and "Low" flags.}
+}
+\value{
+Data frame. Will print AGP plot if requested.
 }
 \description{
-Wrapper function whcih calls the other computation functions to quickly compute all CMG metrics.
+Computes AGP thermometers, GMI and average glucose with the option to create the AGP thermometers plot
+by calling each of the respective individual function.
+Like the other computation only one of 'freq' and 'breaks' may be specified. Start and end dates may
+also be specified. It is recommended that this is only used when the data is not deidentified.
+There is also the option
+to not include boundary values.
+}
+\examples{
+bg_date_time <- as.POSIXct(c("2020-01-01 01:01:01", "2020-03-01 01:01:01",
+"2020-06-01 01:01:01", "2020-07-01 01:01:01", "2020-09-09 01:01:01", "2020-12-09 01:01:01",
+"2021-01-01 01:01:01"), tz = "UTC")
+bg_value_num <- c(67, 100, 150, 123, 124, 80, 300)
+record_id <- c(010101, 010101, 010101, 010101, 010101, 010101, 010101)
+bg_value_flag <- c(NA, NA, NA, NA, NA, NA, NA)
+
+df <- dplyr::tibble(bg_date_time = bg_date_time, bg_value_num = bg_value_num, record_id = record_id,
+bg_value_flag = bg_value_flag)
+
+cgm_summaries(df, breaks = c(0, 1.5, 4.5, 7, 10, 13), plot = F)
+
 }

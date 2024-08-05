@@ -1,12 +1,27 @@
-#' Reads Dexcom data
+#' Reads dexcom data
 #'
-#' Reads .csv file, deidentifies the data (removes PHI), reformats
-#' @param x A file (maybe filepath).
+#' Reads a patient.csv file and reformats the data. Optionally deidentifies the data. The
+#' input should either be a full filepath, or the user should set their working directory to the local
+#' folder and then supply the filename (with the .csv ending, necessary for read-dexcom functioning properly).
+#' @param x Filepath.
 #'
-#' @return A data frame.
+#' @return Date frame. Four columns: 'bg_date_time', 'bg_value_num', 'record_id', 'bg_value_flag'.
+#' 'bg_date_time' consists of the processed date times, each entry is a POSIXct object.
+#' 'bg_value_num' consists of numeric blood glucose measurements which fall in the 40-400 range, each entry
+#' is a string which needs to be converted to numeric if user wants to manipulate independently; fourT package
+#' functions do this automatically.
+#'  If blood glucose values exceed the 40-400 range limits they are flagged "High" or
+#' "Low". 'bg_value_flag' records these flagged observations with "High" and "Low" values. If the observation
+#' is not flagged, then its 'bg_value_flag' value is NA. Number of rows should be three less than the
+#' original .csv file
 #' @export
 #'
 #' @examples
+#' read_dexcom("~/Desktop/R Workspace/4T/external files/4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv")
+#' #is equivalent to
+#' setwd(("~/Desktop/R Workspace/4T/external files")
+#' read_dexcom("4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv")
+#'
 read_dexcom <- function(x, col_spec = FALSE, deid = F) {
   #if(x != .csv file){
     #stop("incorrect file type input")

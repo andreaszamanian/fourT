@@ -28,14 +28,14 @@ library(knitr)
 
 The 4T study is a team-based, technology drive type 1 diabetes management program at Stanford. The 4T study consists of multiple states. The 4T study began with Pilot 4T (2018-2020). Associated with this is 4T Pilot and Pre-Pilot Study Database. 4T Study 1 followed (May 2021 - present) and then 4T Study 2 (March 2022 - ). The 4T Study 1 "assessed the impact of a systematic and equitable digital-health-team-based care program implementing tighter glucose targets (HbA1c < 7%), early technology use (continuous glucose monitoring starts <1 month after diagnosis) and remote patient monitoring on glycemia in young people with newly diagnosed T1D enrolled in the Teamwork, Targets, Technology, and Tight Control"^[Prahalad, P., Scheinker, D., Desai, M. et al. Equitable implementation of a precision digital health program for glucose management in individuals with newly diagnosed type 1 diabetes. Nat Med 30, 2067–2075 (2024). https://doi.org/10.1038/s41591-024-02975-y]. The primary outcome for 4T Study 1 was change in HbA1c from 4 to 12 months after diagnosis. The secondary outcome was achieving HbA1c targets. There are some common metrics and visuals computed with continuous glucose monitoring (CGM data):
 
- * ambulatory glucose profile (AGP) thermometers (time in range (TIR), time in tight range (TITR), time below range (TBR), time below range 2 (TBR2), time above range (TAR), time above range 2(TABR2))
+ * ambulatory glucose profile (AGP) thermometers (time in range (TIR), time in tight range (TITR), time below range (TBR), time below range 2 (TBR2), time above range (TAR), time above range 2(TAR2))
  * glucose management indicator (GMI)
  * CGM wear time (proportion of eligible hours worn)
  * AGP stacked bar plot
 
 ## fourT Package Aim and Overview
 
-There are many, many people involved in 4T. Many of these people use different code to compute the various metrics associated with the 4T study. The fourT package aims to homogenize computation and visualization methods, enable quicker workflow and enable easier collaboration with other institutions. 
+There are many people involved in 4T. Many of these people use different code to compute the various metrics associated with the 4T study. The fourT package aims to homogenize computation and visualization methods, enable quicker workflow and enable easier collaboration with other institutions. 
 
 There are three groups of functions in the fourT package, computation functions, visualization functions and helper functions. All functions in the fourT package operate on two types of objects, individual patients and cohorts. An individual patient is a single patient's dexcom data (.csv) file. A cohort is a collection of individual patients stored in a single folder.
 
@@ -55,7 +55,7 @@ To use the fourT package the user must first read the patient file using the 're
 This cleans entries which may have the date-time incorrectly inputted (i.e. NA values) and reformats the data. The 'read_dexcom' function can also optionally remove PHI and randomize the year to deidentify the data; this is controlled by the 'deid' parameter.
 
 ```{r, include = F}
-  df_dex1_truncated <- head(df_dex1, 10)
+  df_dex1_truncated <- head(df_dex1, 20)
 ```
 
 
@@ -118,85 +118,135 @@ This function can also be used to simultaneously create the AGP thermometer stac
 knitr::include_graphics("plot_output.png")
 ```
 
-<center>
+</center>
 
-This same workflow works at the cohort level.
+A similar workflow works for cohorts. The user should first read the cohort data
+using the 'read_cohort_dexcom' function.
+
+```{r ,include = F}
+  oldw <- getOption("warn")
+  options(warn = -1)
+```
+
+```{r, message=FALSE}
+df_cohort_dex <- read_cohort_dexcom("~/Desktop/R Workspace/4T/external files/cohort-ex")
+```
+
+```{r, include = F}
+  df_cohort_dex_truncated <- head(df_cohort_dex, 20)
+```
+
+<center>
+```{r, echo=FALSE}
+  # I want to only show the ouput here, not the code
+    knitr::kable(df_cohort_dex_truncated)
+```
+</center>
+
+
+
+```{r ,include = F}
+  
+  options(warn = oldw)
+```
+
+'read_cohort_dexcom' may take more than just the filepath as input. It also uses two paraemters 'indiv' and 'ordered'. 'indiv' determines whether patient files should be read into seperate data frames, or one large data frame. 'ordered' is used only when 'indiv' = FALSE. If 'ordered' = TRUE then the combined data frame rows are rearranged in chronological order. If 'ordered' = FALSE then the combined data frame remains seperated by patient. When 'indiv' is FALSE, 'read_cohort_dexcom' returns a list of data frames.
+
+After reading the cohort dexcom data, the user can use the cohort cgm_summaries function 'cohort_cgm_summaries' to compute the same summaries at the cohort level. 'cohort_cgm_summaries' takes the same parameters as the patient 'cgm_summaries' functions, along with the parameters added to the 'read_cohort_dexcom' function. The user can again choose whether to plot the AGP thermometers.
+
+<center>
+```{r, eval = F}
+  cohort_cgm_summaries(df_cohort_dex, breaks = c(0, 1, 3, 6, 7.5, 9, 12), plot = T)
+```
+```{r, echo=FALSE}
+    knitr::kable(cohort_cgm_summaries(df_cohort_dex, breaks = c(0, 1, 3, 6, 7.5, 9, 12)))
+```
+```{r, echo = F, out.width = "600px"}
+knitr::include_graphics("plot_output2.png")
+```
+</center>
 
 ## Documentation
-
 ```{r}
 ?compute_gmi
 ```
 
-
-## Package Structure
-
-<center>
-
-```{r, echo = F, out.width = "1000px"}
-library(DiagrammeR)
-
-grViz("
-digraph function_web {
-
-  # Define the nodes
-  node [shape = box, style = filled, color = lightblue]
-  compute_avg_glucose -> {compute_agp compute_agp_for_plot compute_gmi convert_bv}
-  compute_agp -> {compute_agp_for_plot make_plot}
-  compute_gmi -> make_plot
-  compute_agp_for_plot -> plot_agp
-  plot_agp -> make_plot
-  make_plot -> plot
-
-  # Define the nodes for external functions
-  compute_wear_time -> filter
-  check_lookback -> {compute_agp change_window}
-  change_window -> truncate_window
-  truncate_window -> {filter find_end_date find_start_date}
-  set_inter -> filter
-  cgm_summaries -> {compute_avg_glucose compute_gmi plot_agp}
-  check_days_minimum -> cgm_summaries
-  read_dexcom -> cgm_summaries
-  convert_bv -> compute_avg_glucose
-
-  # Define subgraphs for categorization
-  subgraph cluster_plotting {
-    label = 'Plotting Functions'
-    color = lightgrey
-    plot_agp -> make_plot
-    make_plot -> plot
-  }
-
-  subgraph cluster_computations {
-    label = 'Computational Functions'
-    color = lightgreen
-    compute_avg_glucose -> {compute_agp compute_agp_for_plot compute_gmi}
-    compute_agp -> compute_agp_for_plot
-    compute_gmi -> make_plot
-    compute_wear_time -> filter
-    check_lookback -> {compute_agp change_window}
-    change_window -> truncate_window
-    truncate_window -> {filter find_end_date find_start_date}
-    set_inter -> filter
-    cgm_summaries -> {compute_avg_glucose compute_gmi plot_agp}
-    check_days_minimum -> cgm_summaries
-    read_dexcom -> cgm_summaries
-    convert_bv -> compute_avg_glucose
-  }
-
-  # Main function call
-  compute_avg_glucose -> compute_agp_for_plot
-
-  # Optional: Customize the graph's appearance
-  graph [rankdir = TB] # Layout the graph from top to bottom
-}
-")
-
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-<center>
+```{r, echo = F}
+helpfile <- utils:::.getHelpFile(help(compute_gmi))
+outfile <- tempfile(fileext = ".html")
+tools:::Rd2HTML(helpfile, out =outfile)
+rawHTML <- paste(readLines(outfile), collapse="\n")
+knitr::asis_output(htmltools::htmlPreserve(rawHTML))
+```   
+
+```{r}
+?compute_agp
+```
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = F}
+helpfile <- utils:::.getHelpFile(help(compute_agp))
+outfile <- tempfile(fileext = ".html")
+tools:::Rd2HTML(helpfile, out =outfile)
+rawHTML <- paste(readLines(outfile), collapse="\n")
+knitr::asis_output(htmltools::htmlPreserve(rawHTML))
+```   
+
+```{r}
+?read_dexcom
+```
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = F}
+helpfile <- utils:::.getHelpFile(help(read_dexcom))
+outfile <- tempfile(fileext = ".html")
+tools:::Rd2HTML(helpfile, out =outfile)
+rawHTML <- paste(readLines(outfile), collapse="\n")
+knitr::asis_output(htmltools::htmlPreserve(rawHTML))
+```   
+
+```{r}
+?plot_agp
+```
 
 
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = F}
+helpfile <- utils:::.getHelpFile(help(plot_agp))
+outfile <- tempfile(fileext = ".html")
+tools:::Rd2HTML(helpfile, out =outfile)
+rawHTML <- paste(readLines(outfile), collapse="\n")
+knitr::asis_output(htmltools::htmlPreserve(rawHTML))
+```   
+
+```{r}
+?cgm_summaries
+```
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = F}
+helpfile <- utils:::.getHelpFile(help(cgm_summaries))
+outfile <- tempfile(fileext = ".html")
+tools:::Rd2HTML(helpfile, out =outfile)
+rawHTML <- paste(readLines(outfile), collapse="\n")
+knitr::asis_output(htmltools::htmlPreserve(rawHTML))
+```   
 
 ## Computation Functions
 
@@ -215,6 +265,7 @@ The 'inter' parameter allows for the specification of regular interval windows i
 Example 1: start = "default", end = "default", inter = 14, breaks = NULL, cut_reference = "end"
 
 <center>
+
 ![Use of 'inter' parameter with default 'start 'and 'end' points](graphic1.png)
 </center>
 
@@ -245,49 +296,17 @@ The only helper function currently in the package is the 'read_dexcom' function.
 
 <center>
 
-![Branching](graphic2.png)
+```{r, echo = F, out.width = "600px"}
+knitr::include_graphics("branches.png")
+```
 
 
-![Recording Issues](graphic2.png)
+```{r, echo = F, out.width = "600px"}
+knitr::include_graphics("issues.png")
+```
 
-<center>
+</center>
 
 ## Next Steps for fourT Package
 
-
-
-
-
-
-What does this package do
-What are the various workflows (or just idela workflow)
-What is the documentation supported in package
-What is the structure of the package
- - dependencies
- - how cohort functions generalize individual patient functions
-How did I develop this package
- - doing version control in github
-    -- show a bit of my github + r workflow
-    -- how can this be more helpful when it's not just one person using it
-    
-Full walkthrough on package use
-
-
   
-
-```{r, include = FALSE}
-#x_0 <- read_dexcom("~/Desktop/R #Workspace/4T/fourT/vignettes/4T.399_Clarity_Export_00123_Doe_John_2024-05-01_162849.csv", F)
-#x_1 <- compute_wear_time(x_0)
-#x_2 <- compute_agp(x_0, 1)
-#x_3 <- compute_gmi(x_0, 1)
-#x_4 <- compute_avg_glucose(x_0, 1)
-```
-
-One can read a patient file as follows ...
-```{r, message = FALSE}
-#read_dexcom(filepath, F)
-#View(read_dexcom(filepath, F))
-```
-
-
-

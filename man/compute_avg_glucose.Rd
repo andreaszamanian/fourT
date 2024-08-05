@@ -18,13 +18,27 @@ compute_avg_glucose(
 \item{df_dex}{Data frame outputted by read_dexcom}
 
 \item{start}{Date-time. Computation window start date. Value of "default" means
-function ignores this parameter at computes up to the start of the data.}
+function ignores this parameter and computes up to the start of the data.}
 
 \item{end}{Date-time. Computation window end date. Value of "default" means
-function ignores this parameter at computes up to the start of the data.}
+function ignores this parameter and computes up to the start of the data.}
+
+\item{lookback}{Number of days to look back for GMI computations. Defaults to 90 days.}
+
+\item{freq}{Time interval for computation; e.g. every 14 days, every month, etc.}
+
+\item{breaks}{Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.}
 
 \item{from_gmi}{Boolean. For internal use only. TRUE if compute_avg_glucose is being called
 by the compute_gmi function. Otherwise FALSE.}
+
+\item{include_bv}{If TRUE, "High" and "Low" flags are converted to value 400 and 40
+respectively and used in computations. If FALSE, this conversion does not happen;
+computations ignore the "High" and "Low" flags.}
+}
+\value{
+Data frame with average glucose metrics
 }
 \description{
 Compute average glucose in given time periods

@@ -1,7 +1,7 @@
-#' Compute GMI
+#' Compute glucose management indicator (GMI)
 #'
-#' Computes the glucose management indicator for a given time frame.
-#' GMI is computed following the results of:
+#' Computes the GMI for a given patient.
+#' The formula for GMI comes from:
 #' https://diabetesjournals.org/care/article/42/4/e60/36083/Glucose-Management-Indicator-GMI-Insights-and
 #'
 #' @param df_dex Data frame outputted by read_dexcom
@@ -21,6 +21,18 @@
 #' @export
 #'
 #' @examples
+#' bg_date_time <- as.POSIXct(c("2020-01-01 01:01:01", "2020-03-01 01:01:01",
+#' "2020-06-01 01:01:01", "2020-07-01 01:01:01", "2020-09-09 01:01:01", "2020-12-09 01:01:01",
+#' "2021-01-01 01:01:01"), tz = "UTC")
+#' bg_value_num <- c(67, 100, 150, 123, 124, 80, 300)
+#' record_id <- c(010101, 010101, 010101, 010101, 010101, 010101, 010101)
+#' bg_value_flag <- c(NA, NA, NA, NA, NA, NA, NA)
+#'
+#'
+#' df <- dplyr::tibble(bg_date_time = bg_date_time, bg_value_num = bg_value_num, record_id = record_id,
+#' bg_value_flag = bg_value_flag)
+#'
+#' compute_gmi(df, breaks = c(0, 1.5, 4.5, 7, 10, 13))
 compute_gmi <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                         breaks = NULL, include_bv = TRUE) {
 

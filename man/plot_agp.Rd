@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_agp.R
 \name{plot_agp}
 \alias{plot_agp}
-\title{Canonical bar plot for AGP Thermometers}
+\title{Stacked bar plot for AGP Thermometers}
 \usage{
 plot_agp(
   df_dex,
@@ -25,5 +25,5 @@ function ignores this parameter at computes up to the start of the data.}
 \item{inter}{time interval}
 }
 \description{
-Canonical bar plot for AGP Thermometers
+Stacked bar plot for AGP Thermometers
 }

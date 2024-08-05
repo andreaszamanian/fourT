@@ -5,6 +5,13 @@
 #' function ignores this parameter and computes up to the start of the data.
 #' @param end Date-time. Computation window end date. Value of "default" means
 #' function ignores this parameter and computes up to the start of the data.
+#' @param lookback Number of days to look back for GMI computations. Defaults to 90 days.
+#' @param freq Time interval for computation; e.g. every 14 days, every month, etc.
+#' @param breaks Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+#' would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.
+#' @param include_bv If TRUE, "High" and "Low" flags are converted to value 400 and 40
+#' respectively and used in computations. If FALSE, this conversion does not happen;
+#' computations ignore the "High" and "Low" flags.
 #' @param from_gmi Boolean. For internal use only. TRUE if compute_avg_glucose is being called
 #' by the compute_gmi function. Otherwise FALSE.
 #'
@@ -12,6 +19,8 @@
 #' @export
 #'
 #' @examples
+#``
+#'
 compute_avg_glucose <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                                 breaks = NULL, from_gmi = F) {
 

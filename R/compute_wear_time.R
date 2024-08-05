@@ -9,6 +9,18 @@
 #' @export
 #'
 #' @examples
+#' bg_date_time <- as.POSIXct(c("2020-01-01 01:01:01", "2020-03-01 01:01:01",
+#' "2020-06-01 01:01:01", "2020-07-01 01:01:01", "2020-09-09 01:01:01", "2020-12-09 01:01:01",
+#' "2021-01-01 01:01:01"), tz = "UTC")
+#' bg_value_num <- c(67, 100, 150, 123, 124, 80, 300)
+#' record_id <- c(010101, 010101, 010101, 010101, 010101, 010101, 010101)
+#' bg_value_flag <- c(NA, NA, NA, NA, NA, NA, NA)
+#'
+#'
+#' df <- dplyr::tibble(bg_date_time = bg_date_time, bg_value_num = bg_value_num, record_id = record_id,
+#' bg_value_flag = bg_value_flag)
+#' compute_wear_time(df)
+#'
 compute_wear_time <- function(df_dex, start = "default", end = "default", fumonths){
 
   #default start and end values, this method will be slightly simpler than

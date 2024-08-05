@@ -1,4 +1,4 @@
-#' Canonical bar plot for AGP Thermometers
+#' Stacked bar plot for AGP Thermometers
 #'
 #' @param df_dex Data frame outputted by read_dexcom
 #' @param start Date-time. Computation window start date. Value of "default" means
