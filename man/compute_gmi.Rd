@@ -23,24 +23,35 @@ function ignores this parameter and computes up to the start of the data.}
 \item{end}{Date-time. Computation window end date. Value of "default" means
 function ignores this parameter and computes up to the start of the data.}
 
-\item{lookback}{Number of days to look back for GMI computations. Defaults to 90 days.}
+\item{lookback}{Integer. Number of days to look back for GMI computations. Must be greater than or equal
+to 14 and less than or equal to 90. Defaults to 90 days.}
 
-\item{freq}{Time interval for computation; e.g. every 14 days, every month, etc.}
+\item{freq}{Integer. Time interval frequency (in days) for
+computation; e.g. every 14 days, every 30 days, etc. The default value is 14 days to match
+convention in 4T studies.}
 
-\item{breaks}{Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
-would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.}
+\item{breaks}{Numeric vector. Specify range computations manually by month, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5. Similarly to the usage with the freq
+parameter, if there are less than 14 days of data in a given breaks interval then GMI is set to NA}
 
 \item{include_bv}{If TRUE, "High" and "Low" flags are converted to value 400 and 40
 respectively and used in computations. If FALSE, this conversion does not happen;
 computations ignore the "High" and "Low" flags.}
 }
 \value{
-Data frame with GMI metrics
+Data frame with GMI metrics. Three columns: bg_mean, bg_total, gmi. bg_total is the sum of all
+bg values in the time frame, bg_mean is that value divided by n, gmi is then computed by the above formula.
 }
 \description{
-Computes the GMI for a given patient.
-The formula for GMI comes from:
-https://diabetesjournals.org/care/article/42/4/e60/36083/Glucose-Management-Indicator-GMI-Insights-and
+GMI is calculated per Bergenstal & Beck (2018) as an approximation of HbA1c (\%).
+The GMI computation uses up to 90 days of prior glucose readings, and no less than 14 days; this
+is reflected in the limitations on the lookback parameter.
+The explicit formula is Formula: 3.31 + 0.02392*avg_glucose.
+Here 'avg_glucose' is the sensor glucose readings averaged over up to 90 days.
+For days with less than 14 days in the its lookback window, GMI is set to NA
+}
+\details{
+For more examples see the 'Getting started' vignette.
 }
 \examples{
 bg_date_time <- as.POSIXct(c("2020-01-01 01:01:01", "2020-03-01 01:01:01",
@@ -54,5 +65,6 @@ bg_value_flag <- c(NA, NA, NA, NA, NA, NA, NA)
 df <- dplyr::tibble(bg_date_time = bg_date_time, bg_value_num = bg_value_num, record_id = record_id,
 bg_value_flag = bg_value_flag)
 
-compute_gmi(df, breaks = c(0, 1.5, 4.5, 7, 10, 13))
+
+compute_gmi(df, freq = 14)
 }

@@ -26,7 +26,9 @@
 #' respectively and used in computations. If FALSE, this conversion does not happen;
 #' computations ignore the "High" and "Low" flags.
 #'
-#' @return Data frame with GMI metrics
+#' @return Data frame with GMI metrics. Three columns: bg_mean, bg_total, gmi. bg_total is the sum of all
+#' bg values in the time frame, bg_mean is that value divided by n, gmi is then computed by the above formula.
+#'
 #' @export
 #'
 #' @examples
