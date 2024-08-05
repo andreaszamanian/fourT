@@ -29,7 +29,8 @@ plot_agp <- function(df_dex, start = "default", end = "default", lookback = 90, 
 
 
   if (!is.null(breaks)) {
-    x_labels <- paste0(seq_len(nrow(dt_agp)), " month", ifelse(seq_len(nrow(dt_agp)) > 1, "s", ""))
+    breaks_2 <- breaks[breaks != 0]
+    x_labels <-  paste0(breaks_2, " month", ifelse(breaks_2 > 1, "s", ""))
   } else if (!is.null(freq)) {
     x_labels <- sapply(seq_len(nrow(dt_agp)) * freq, function(days) {
       if (days == 1) {
@@ -57,7 +58,8 @@ compute_agp_for_plot <- function(df_dex, start = "default", end = "default", loo
       #find last date in that inter
       df_constrained <- dplyr::filter(df, inter == i)
 
-      end_date <- df_constrained$bg_date_time[length(df_constrained$bg_date_time)]
+      end_date <- as.POSIXct(df_constrained$labs[nrow(df_constrained)], tz = "UTC")
+      end_date <- end_date + lubridate::seconds(86400)
       #<- lubridate::as_date(find_end_date(df_constrained))
       #use to compute start of window
       #start_date <- lubridate::as_date(end_date - lubridate::seconds(lookback*86400))
