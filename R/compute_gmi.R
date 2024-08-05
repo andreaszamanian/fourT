@@ -1,18 +1,27 @@
 #' Compute glucose management indicator (GMI)
 #'
-#' Computes the GMI for a given patient.
-#' The formula for GMI comes from:
-#' https://diabetesjournals.org/care/article/42/4/e60/36083/Glucose-Management-Indicator-GMI-Insights-and
+#' GMI is calculated per Bergenstal & Beck (2018) as an approximation of HbA1c (%).
+#' The GMI computation uses up to 90 days of prior glucose readings, and no less than 14 days; this
+#' is reflected in the limitations on the lookback parameter.
+#' The explicit formula is Formula: 3.31 + 0.02392*avg_glucose.
+#' Here 'avg_glucose' is the sensor glucose readings averaged over up to 90 days.
+#' For days with less than 14 days in the its lookback window, GMI is set to NA
+#'
+#' For more examples see the 'Getting started' vignette.
 #'
 #' @param df_dex Data frame outputted by read_dexcom
 #' @param start Date-time. Computation window start date. Value of "default" means
 #' function ignores this parameter and computes up to the start of the data.
 #' @param end Date-time. Computation window end date. Value of "default" means
 #' function ignores this parameter and computes up to the start of the data.
-#' @param lookback Number of days to look back for GMI computations. Defaults to 90 days.
-#' @param freq Time interval for computation; e.g. every 14 days, every month, etc.
-#' @param breaks Vector. Specify range computations manually, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
-#' would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5.
+#' @param lookback Integer. Number of days to look back for GMI computations. Must be greater than or equal
+#' to 14 and less than or equal to 90. Defaults to 90 days.
+#' @param freq Integer. Time interval frequency (in days) for
+#' computation; e.g. every 14 days, every 30 days, etc. The default value is 14 days to match
+#' convention in 4T studies.
+#' @param breaks Numeric vector. Specify range computations manually by month, e.g. c(0, 1, 4.5, 7.5, 10.5, 13.5)
+#' would report values at study months 0, 1, 4.5, 7.5, 10.5, and 13.5. Similarly to the usage with the freq
+#' parameter, if there are less than 14 days of data in a given breaks interval then GMI is set to NA
 #' @param include_bv If TRUE, "High" and "Low" flags are converted to value 400 and 40
 #' respectively and used in computations. If FALSE, this conversion does not happen;
 #' computations ignore the "High" and "Low" flags.
@@ -32,7 +41,8 @@
 #' df <- dplyr::tibble(bg_date_time = bg_date_time, bg_value_num = bg_value_num, record_id = record_id,
 #' bg_value_flag = bg_value_flag)
 #'
-#' compute_gmi(df, breaks = c(0, 1.5, 4.5, 7, 10, 13))
+#'
+#' compute_gmi(df, freq = 14)
 compute_gmi <- function(df_dex, start = "default", end = "default", lookback = 90, freq = NULL,
                         breaks = NULL, include_bv = TRUE) {
 
